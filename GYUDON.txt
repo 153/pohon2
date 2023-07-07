@@ -1,0 +1,22 @@
+regexp
+
+^((-?[a-z0-9-]+)[:+,])*(-?[a-z0-9-]+)$
+
+valid characters a-z, 0-9 and - for tags
+
+order of operations
+
+: logical and (infix)
++ logical and (infix)
+, logical or (infix)
+- logical not (prefix)
+
+examples
+
+downloads:ringtones:cool+free
+
+software:unix,linux,bsd
+
+news:-lgbtq
+
+games:mods:counter-strike:maps+dm

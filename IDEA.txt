@@ -1,0 +1,36 @@
+* Icons?
+
+
+index.txt
+  thread<>time_reply<>replies<>subject
+log.txt
+  ipaddress<>thread<>time_reply<>replynum<>comment<>subject<>author
+thread.txt
+  tags<>subject
+  ipaddress<>time_reply<>replynum<>comment<>subject<>author
+
+
+new thread:
+  * subject
+  * comment
+  o author
+  x time
+
+comment:
+  * comment
+  * thread
+  * parent  
+  o subject
+  o author
+  x time
+  x replynum
+
+log.txt
+time | ipaddress | thread# | reply# | author | comment
+
+index.txt
+thread | time | reply | subject
+
+thread.txt
+tags<>title
+time | ipaddress | reply | author | comment
