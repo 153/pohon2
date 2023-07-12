@@ -8,19 +8,19 @@ def new_thread(subject="", comment="", author="", tags=""):
     if not tags:
         tags = "random"
     ipaddr = "0.0"
-    threadno = str(int(time.time()))
+    thread = str(int(time.time()))
     if not author:
         author = settings.anon    
     meta = "<>".join([tags, subject])
-    post = "<>".join([ipaddr, threadno, "1", comment, subject, author])
+    post = "<>".join([ipaddr, thread, "1", comment, subject, author])
 
     # Write the thread file....
     tfile = "\n".join([meta, post])
-    with open(f"threads/{threadno}.txt", "w") as threadfile:
+    with open(f"threads/{thread}.txt", "w") as threadfile:
         threadfile.write(tfile)
 
     # Update the index....
-    iline = "<>".join([threadno, threadno, "1", subject])
+    iline = "<>".join([thread, thread, "1", subject])
     with open("threads/index.txt", "r") as index:
         index = index.read()
     index = "\n".join([iline, index])
@@ -28,23 +28,23 @@ def new_thread(subject="", comment="", author="", tags=""):
         newindex.write(index)
 
     # Update the log...
-    update_log(ipaddr, threadno, threadno, "1", comment, subject, author)
+    update_log(ipaddr, thread, thread, "1", comment, subject, author)
 
-def update_log(ip, threadno, time_reply, replynum,
+def update_log(ip, thread, time_reply, replynum,
                comment, subject, author):
-    line = "<>".join([ip, threadno, time_reply, replynum,
+    line = "<>".join([ip, thread, time_reply, replynum,
                       comment, subject, author])
     line = line + "\n"
     with open("threads/log.txt", "a") as log:
         log.write(line)
 
-def update_index(threadno, time_reply):    
+def update_index(thread, time_reply):    
     with open("threads/index.txt") as indexf:
         indexf = indexf.read().splitlines()
     indexf = [i.split("<>") for i in indexf if len(i.strip())]
     indexdic = {i[0]: i[1:] for i in indexf}
-    indexdic[threadno][0] = time_reply    
-    indexdic[threadno][1] = str(int(indexdic[threadno][1]) + 1)
+    indexdic[thread][0] = time_reply    
+    indexdic[thread][1] = str(int(indexdic[thread][1]) + 1)
     indexf = "\n".join(["<>".join([i[0], *indexdic[i[0]]]) for i in indexf])
     with open("threads/index.txt", "w") as index:
         index.write(indexf)
@@ -62,11 +62,6 @@ def mk_replynum(thread, parent="1"):
         tfile = tfile.read().splitlines()
     replynum = str(len(tfile))
     return ":".join([parent, replynum])
-
-def get_meta(number):
-    with open(f"./threads/{number}.txt", "r") as meta:
-        meta = meta.readlines()[0]
-    return meta.split("<>")
 
 def new_reply(thread, comment, parent, author="", subject=""):
     now = str(int(time.time()))

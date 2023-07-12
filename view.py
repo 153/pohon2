@@ -90,6 +90,6 @@ def view_thread(thread):
 # post.new_thread(subject, comment, author, tags)
 @view.route('/create')
 def create_thread():
-
+    return false
     
 #print(mk_page(view_thread("1660449790")))
