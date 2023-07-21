@@ -7,12 +7,28 @@ body {
 }
 
 a, a:visited { color: #64D449;}
-/* 
-  a:visited {color: #ddd;} 
-  a:active {color: #f00;}
-  a:hover {color: #fff; background-color: #508080}
-*/
 
-hr { border: 0 none; height: 2px; background-color: #c0c0c0; color: #c0c0c0;}
+hr {
+    border: 0 none;
+    height: 2px;
+    background-color: #c0c0c0;
+    color: #c0c0c0;
+}
 
-.title {background-color: #007f7f; padding:2px; color:#fff}
+.title {
+    background-color: #007f7f;
+    padding:2px;
+    color:#fff
+}
+
+.new-thread {
+    line-height: 2;
+}
+.new-thread > form > input[type="text"] {
+    width: 300px;
+}
+
+.new-thread > form > textarea {
+    width: 450px;
+    height: 500px;
+}

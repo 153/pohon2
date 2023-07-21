@@ -10,7 +10,9 @@ def new_thread(subject="", comment="", author="", tags=""):
     ipaddr = "0.0"
     thread = str(int(time.time()))
     if not author:
-        author = settings.anon    
+        author = settings.anon
+    comment = comment.replace("&", "&amp;").replace("<", "&lt;")
+    comment = comment.replace("\n","<br>").replace("\r","")
     meta = "<>".join([tags, subject])
     post = "<>".join([ipaddr, thread, "1", comment, subject, author])
 
@@ -29,6 +31,7 @@ def new_thread(subject="", comment="", author="", tags=""):
 
     # Update the log...
     update_log(ipaddr, thread, thread, "1", comment, subject, author)
+    return "Thread posted successfully" 
 
 def update_log(ip, thread, time_reply, replynum,
                comment, subject, author):

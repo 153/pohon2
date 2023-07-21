@@ -1,23 +1,13 @@
 import copy
 
-example = {
-    "1": ["15:22", "Nameless", "I shaved my cat today."],
-    "1:2": ["15:30", "Curious", "Why did you do that?"],
-    "1:3": ["15:34", "Purrvert", "Post shaved pussy pics!"],
-    "1:2:4": ["15:45", "Nameless", "Her hair grows pretty long and she likes to play outside."],
-    "1:5": ["15:50", "Anon", "What is your cat named?"],
-    "1:3:6": ["15:55", "Nameless", "Get a life, you freak!!"],
-    "1:5:7": ["16:20", "Nameless", "She is named Kelly and she is 4 years old."],
-    "1:3:6:8": ["16:22", "Purrvert", "No. :3"]
-    }
-
 chars = {
     "diamond": "&#9670;",
     "square": "&#9632;",
     "line": "&boxv;",
     "dash": "&boxh;",
     "cross": "&boxvr;",
-    "corner": "&boxur;"
+    "corner": "&boxur;",
+    "space": "&emsp;"
 }
 
 def mklvl(treed):
@@ -113,12 +103,7 @@ def branch(node, comment, test=1):
         tail = tail.split("<br>")
     else:
         tail = [tail]
-        
-    # If no subject (comment[1]), try to load the first comment
-    # if len(comment[1]) == 0:
-    #     comment[1] = tail.pop(0)
-    # if len(tail) == 0:
-    #     tail.append("")
+    tail.append(" ")
         
     head += chars['square'] + "&emsp;" \
          + comment[0] + " " + comment[1]
@@ -126,23 +111,24 @@ def branch(node, comment, test=1):
     for n, t in enumerate(tail):
         if "boxur" in head and not head.startswith("&boxur;"):
             if not node[2][-1] == "&boxv;":
-                t = "&emsp;" + t
-
+                t = "&emsp;&emsp;" + t
+            else:
+                t = "&emsp;&emsp;" + t
         tail[n] = "&emsp;".join(node[2]) \
-            + "&emsp;" + t \
-            + "\n" + "&emsp;".join(node[2])
-    tail = "".join(tail)
+            + "&emsp;" + t
+        continue
+    tail = "\n".join(tail)
     return "\n".join([head, tail])
         
-    if "boxur" in head and not head.startswith("&boxur;"):
-        if not node[2][-1] == "&boxv;":
-            comment[2] = "&emsp;" + comment[2]
+#    if "boxur" in head and not head.startswith("&boxur;"):
+#        if not node[2][-1] == "&boxv;":
+#            comment[2] = "&emsp;" + comment[2]
 
     # Make a loop for multiline comments
-    tail = "&emsp;".join(node[2]) \
-        + "&emsp;" + comment[2] \
-        + "\n" + "&emsp;".join(node[2])
-    return "\n".join([head, tail])
+    # tail = "&emsp;".join(node[2]) \
+#    tail = "&emsp;" + comment[2] \
+#        + "\n" + "&emsp;".join(node[2])
+#    return "\n".join([head, tail])
 
 def fmt_tree(tree):
     skeleton = mktree(tree)
@@ -153,19 +139,6 @@ def fmt_tree(tree):
         message = tree[i[0]]
         output[n] = branch(i, message)
     return "\n".join(output)
-
-def fmt_list(tree):
-    for i in tree:
-        print(chars["square"],
-              f"<a class='title'>#{i.split(':')[-1]}</a>",
-              example[i][1] + ", at",  example[i][0])
-        print(chars["line"])
-        if len(i.split(":")) > 2:
-            print(chars["line"], f"<a href=''>>>{i.split(':')[-2]}</a>")
-        while example[i][2].startswith("&emsp;"):
-            example[i][2] = example[i][2][6:].strip()
-        print(chars["line"], example[i][2])
-        print(chars["line"])
 
 if __name__ == "__main__":
     with open("threads/1660449790.txt") as example:

@@ -1,5 +1,6 @@
-import parse
 from flask import Blueprint, request
+import post
+import parse
 import settings
 
 view = Blueprint("view", __name__)
@@ -79,7 +80,6 @@ def view_tree(thread, view="tree"):
     tree = parse.parse_tree(thread)
     page = page.format(subject=subject, replycnt=replycnt,
                        tags=tags, tree=tree, )
-    page += thread_head(thread)
     return mk_page(page)
 
 @view.route('/thread/<thread>')
@@ -88,8 +88,15 @@ def view_thread(thread):
     return mk_page(page)
 
 # post.new_thread(subject, comment, author, tags)
-@view.route('/create')
+@view.route('/create', methods = ["POST", "GET"])
 def create_thread():
-    return false
+    if request.method == "GET":
+        with open("html/new_thread.html") as tform:
+            tform = tform.read()
+        return mk_page(tform)
+    data = request.form
+    result = post.new_thread(data["subject"], data["comment"],
+                             data["author"], data["tags"])
+    return "Thread posted"
     
 #print(mk_page(view_thread("1660449790")))
