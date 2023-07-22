@@ -23,6 +23,26 @@ def mk_page(content):
     page += footer()
     return page
 
+def mk_tagbox():
+    tags = settings.tags
+    template = """<label for="{0}"><input type="checkbox" name="tag"
+id="{0}" value="{0}">{0}</label>"""
+    taglist = []
+    with open("html/tagbox.html") as tagbox:
+        tagbox = tagbox.read()
+    for t in tags:
+        checkbox = template.format(t)
+        if t == "random":
+            checkbox = checkbox.replace("checkbox\"", "checkbox\" checked")
+        taglist.append(checkbox)
+    taglist = "\n".join(taglist)
+    tagbox = tagbox.format(taglist)
+    return tagbox
+
+@view.route('/tags')
+def show_tags():
+    return mk_page(mk_tagbox())
+
 def thread_head(thread):
     meta = parse.get_meta(thread)
     subject = meta[1]
@@ -98,5 +118,7 @@ def create_thread():
     result = post.new_thread(data["subject"], data["comment"],
                              data["author"], data["tags"])
     return "Thread posted"
-    
+
+if __name__ == "__main__":
+    print(mk_page(mk_tagbox()))
 #print(mk_page(view_thread("1660449790")))

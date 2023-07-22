@@ -28,3 +28,26 @@ hr {
     width: 300px;
 }
 
+label {
+    white-space: nowrap;
+}
+
+details {
+    user-select: none;
+    border: 2px solid black;
+    width: 350px;
+    padding: 1em;
+    background-color: #006666;
+}
+
+details > p {
+    border-top: 2px solid white;
+    padding-top: 1em;
+}
+
+summary {
+//    display: flex;
+    cursor: pointer;
+    text-decoration: underline;
+    color: cyan;
+}
