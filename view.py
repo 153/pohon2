@@ -113,10 +113,18 @@ def create_thread():
     if request.method == "GET":
         with open("html/new_thread.html") as tform:
             tform = tform.read()
+        tform = tform.format(mk_tagbox())
         return mk_page(tform)
     data = request.form
-    result = post.new_thread(data["subject"], data["comment"],
-                             data["author"], data["tags"])
+    tags = request.form.getlist("tag")
+    if not len(tags):
+        tags = "random"
+    tags = " ".join([t for t in tags if t in settings.tags])
+    if not len(tags):
+        tags = "random"
+    print(tags)
+#    result = post.new_thread(data["subject"], data["comment"],
+#                             data["author"], data["tags"])
     return "Thread posted"
 
 if __name__ == "__main__":
