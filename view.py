@@ -6,24 +6,28 @@ import settings
 view = Blueprint("view", __name__)
 
 def header():
+    """Return page header boilerplate"""
     with open("html/head.html", "r") as page:
         page = page.read()
     output = page.format(title=settings.title)
     return output
 
 def footer():
+    """Return page footer boilerplate"""
     with open("html/footer.html", "r") as page:
         page = page.read()
     output = page.format(title=settings.title)
     return output
 
 def mk_page(content):
+    """Return a page, wrapping it in the header and footer"""
     page = header()
     page += content
     page += footer()
     return page
 
 def mk_tagbox():
+    """Make checkboxes of tags for OP to use when creating a thread"""
     tags = settings.tags
     template = """<label for="{0}"><input type="checkbox" name="tag"
 id="{0}" value="{0}">{0}</label>"""
@@ -40,6 +44,7 @@ id="{0}" value="{0}">{0}</label>"""
     return tagbox
 
 def tag_list():
+    """Return a simple list of tags with the number of threads they have"""
     with open("threads/tags.txt") as tags:
         tags = tags.read().splitlines()
     tags = [t.split(" ") for t in tags]
@@ -49,6 +54,7 @@ def tag_list():
 
 @view.route('/tags')
 def show_tags():
+    """Format the tag list for users"""
     tags = tag_list()
     page = ["<ul>"]
     for t in tags:
@@ -64,6 +70,7 @@ def show_tags():
     return mk_page(page)
 
 def thread_head(thread):
+    """Create a thread header, showing replies and tags"""
     meta = parse.get_meta(thread)
     subject = meta[1]
     tags = meta[0].split(" ")
@@ -76,6 +83,7 @@ def thread_head(thread):
 
 @view.route('/tree')
 def tree_index():
+    """Show a list of threads; clicking threads renders them as trees"""
     with open("threads/index.txt") as index:
         index = index.read().splitlines()
     index = [i.split("<>") for i in index]
@@ -87,6 +95,7 @@ def tree_index():
 
 @view.route('/thread')
 def thread_index():
+    """Show a list of threads; clicking threads renders them as lists"""
     with open("threads/index.txt") as index:
         index = index.read().splitlines()
     index = [i.split("<>") for i in index]
@@ -98,6 +107,7 @@ def thread_index():
 
 @view.route('/tree/<thread>')
 def view_tree(thread, view="tree"):
+    """View a thread in tree mode"""
     with open("html/tree.html", "r") as page:
         page = page.read()
     with open(f"threads/{thread}.txt", "r") as data:
@@ -124,12 +134,14 @@ def view_tree(thread, view="tree"):
 
 @view.route('/thread/<thread>')
 def view_thread(thread):
+    """View a thread in list mode"""
     page = parse.parse_thread(thread)
     return mk_page(page)
 
 # post.new_thread(subject, comment, author, tags)
 @view.route('/create', methods = ["POST", "GET"])
 def create_thread():
+    """Allow a user to create a new thread"""
     if request.method == "GET":
         with open("html/new_thread.html") as tform:
             tform = tform.read()
