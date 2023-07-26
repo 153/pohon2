@@ -74,9 +74,8 @@ def update_tags(thread, tags):
         tagdic[tag].append(thread)
     tagfile = sorted([[t, *tagdic[t]] for t in tagdic], key=len)[::-1]
     tagfile = "\n".join([" ".join(t) for t in tagfile])
-    return(tagfile)
-#    with open("threads/tags.txt", "w") as taglist:
-#        taglist.write(tagfile)
+    with open("threads/tags.txt", "w") as taglist:
+        taglist.write(tagfile)
         
 def mk_replynum(thread, parent="1"):
     with open(f"threads/{thread}.txt") as tfile:

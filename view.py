@@ -1,6 +1,6 @@
 from flask import Blueprint, request
-import post
 import parse
+import post
 import settings
 
 view = Blueprint("view", __name__)
@@ -39,9 +39,29 @@ id="{0}" value="{0}">{0}</label>"""
     tagbox = tagbox.format(taglist)
     return tagbox
 
+def tag_list():
+    with open("threads/tags.txt") as tags:
+        tags = tags.read().splitlines()
+    tags = [t.split(" ") for t in tags]
+    tags = [[t[0], len(t[1:])] for t in tags]
+    tags.sort(key = lambda x: x[1], reverse = True)
+    return tags
+
 @view.route('/tags')
 def show_tags():
-    return mk_page(mk_tagbox())
+    tags = tag_list()
+    page = ["<ul>"]
+    for t in tags:
+        if t[1] == 0:
+            continue
+        line = f"<li>{t[0]} - {t[1]} "
+        if t[1] > 1:
+            line += "threads"
+        else:
+            line += "thread"
+        page.append(line)
+    page = "\n".join(page)
+    return mk_page(page)
 
 def thread_head(thread):
     meta = parse.get_meta(thread)
@@ -127,5 +147,5 @@ def create_thread():
     return "Thread posted"
 
 if __name__ == "__main__":
-    print(mk_page(mk_tagbox()))
+    show_tags()
 #print(mk_page(view_thread("1660449790")))
