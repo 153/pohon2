@@ -2,18 +2,19 @@ import time
 import settings
 import parse
 
-def new_thread(subject="", comment="", author="", tags=""):
+def new_thread(subject="", comment="", author="", tags=None):
     if None in [subject, comment]:
         return False
     if not tags:
-        tags = "random"
+        tags = ["random"]
     ipaddr = "0.0"
     thread = str(int(time.time()))
     if not author:
         author = settings.anon
-    comment = comment.replace("&", "&amp;").replace("<", "&lt;")
-    comment = comment.replace("\n","<br>").replace("\r","")
-    meta = "<>".join([tags, subject])
+    comment = comment.replace("&", "&amp;").replace("<", "&lt;")\
+                    .replace("\n","<br>").replace("\r","")
+#    comment = comment
+    meta = "<>".join([" ".join(tags), subject])
     post = "<>".join([ipaddr, thread, "1", comment, subject, author])
 
     # Write the thread file....
@@ -31,6 +32,10 @@ def new_thread(subject="", comment="", author="", tags=""):
 
     # Update the log...
     update_log(ipaddr, thread, thread, "1", comment, subject, author)
+
+    # Update the tags
+    update_tags(thread, tags)
+    
     return "Thread posted successfully" 
 
 def update_log(ip, thread, time_reply, replynum,
@@ -60,6 +65,19 @@ def update_thread(thread, ipaddr, time_reply, replynum,
     with open(f"threads/{thread}.txt", "a") as t_file:
         t_file.write(t_line)
 
+def update_tags(thread, tags):
+    with open("threads/tags.txt") as taglist:
+        taglist = taglist.read().splitlines()
+    taglist = [t.split(" ") for t in taglist]
+    tagdic = {t[0]: t[1:] for t in taglist}
+    for tag in tags:
+        tagdic[tag].append(thread)
+    tagfile = sorted([[t, *tagdic[t]] for t in tagdic], key=len)[::-1]
+    tagfile = "\n".join([" ".join(t) for t in tagfile])
+    return(tagfile)
+#    with open("threads/tags.txt", "w") as taglist:
+#        taglist.write(tagfile)
+        
 def mk_replynum(thread, parent="1"):
     with open(f"threads/{thread}.txt") as tfile:
         tfile = tfile.read().splitlines()
@@ -93,6 +111,9 @@ def test_reply():
     author = "Anon"
     new_reply(thread, comment, parent, author)
 
+if __name__ == "__main__":
+    print(update_tags("1689920019", ["random", "meta"]))
+    
 #test_reply()
 #test_thread()
 #new_reply("1687588142", "It's just a fun place to hang out", "1:3")

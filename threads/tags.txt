@@ -1,0 +1,15 @@
+general
+random
+meta
+nsfw
+food
+tech
+life
+news
+shows
+music
+games
+otaku
+society
+diy
+paranormal

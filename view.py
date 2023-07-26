@@ -119,12 +119,11 @@ def create_thread():
     tags = request.form.getlist("tag")
     if not len(tags):
         tags = "random"
-    tags = " ".join([t for t in tags if t in settings.tags])
+    tags = [t for t in tags if t in settings.tags]
     if not len(tags):
-        tags = "random"
-    print(tags)
-#    result = post.new_thread(data["subject"], data["comment"],
-#                             data["author"], data["tags"])
+        tags = ["random"]
+    result = post.new_thread(data["subject"], data["comment"],
+                             data["author"], tags)
     return "Thread posted"
 
 if __name__ == "__main__":

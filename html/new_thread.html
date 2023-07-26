@@ -1,12 +1,15 @@
 <div class="new-thread">
+  <hr>
+  <h3> New text thread</h3>
 <form action="/create" method="post">
 Subject: <input name="subject" type="text" required>
 <br> Author: <input name="author" type="text">
-<br>
+<p>
 {0}
 <p>
 <textarea name="comment" rows="5" cols="70" required></textarea>
 <p>
-<input type="submit">
+  <input type="submit" value="Post thread">
+  <input type="checkbox" checked> Preview
 </form>
 </div>
