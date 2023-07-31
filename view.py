@@ -132,6 +132,20 @@ def view_tree(thread, view="tree"):
                        tags=tags, tree=tree, )
     return mk_page(page)
 
+@view.route('/post/<thread>/<reply>')
+def view_reply(thread, reply="1"):
+    # Show the target post, its parents, its children, and
+    # a new reply box.
+    
+    replychain = reply.split(":")
+    with open(f"threads/{thread}.txt") as comments:
+        comments = comments.read().splitlines()
+    comments = [c.split("<>") for c in comments]
+    replychain = [comments[int(r)][1:] for r in replychain]
+    for r in replychain:
+        print(r[1:])
+    return "ok"
+
 @view.route('/thread/<thread>')
 def view_thread(thread):
     """View a thread in list mode"""
