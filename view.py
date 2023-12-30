@@ -189,7 +189,7 @@ def view_reply(thread, reply="1"):
     page = f"<hr><h2>&#9939; <a href='/thread/{thread}'>{thread_subject}</a></h3>"
     page += f"Go back: <a href='/thread/{thread}#{anc}'>thread mode</a> | <a href='/tree/{thread}#{anc}'>tree mode</a><p>" 
     page += replys[0] + "<p>"
-    page += ld_page("reply_thread")
+    page += ld_page("reply_thread").format(anon=settings.anon, thread=thread, parent=anc)
     page += "<hr>"
     page += "<h3> Older Replies</h3>"
     page += "<p>".join(replys[1:])
@@ -219,3 +219,24 @@ def create_thread():
     result = post.new_thread(data["subject"], data["comment"],
                              data["author"], tags)
     return "Thread posted"
+
+@view.route('/post', methods = ["POST"])
+def reply_thread():
+    data = request.form.copy()
+    if None in [data["thread"], data["comment"]]:
+        return None
+    if "parent" not in data:
+        parent = "1"
+    if "author" not in data:
+        data["author"] = settings.anon
+    if "subject" not in data:
+        data["subject"] = ""
+    post.new_reply(data["thread"], data["comment"],
+                   data["parent"], data["author"],
+                   data["subject"])
+    print(data["thread"])
+    print(data["comment"])
+    print(data["parent"])
+    print(data["author"])
+    print(data["subject"])
+    return data

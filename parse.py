@@ -34,7 +34,7 @@ def parse_thread(thread):
     comments = [t.split("<>") for t in topic[1:]]
     for comment in comments:
         pubdate = datetime.datetime.fromtimestamp(int(comment[1]))
-        pubdate = pubdate.strftime("%y-%m-%d [%a] %H:%M")
+        pubdate = pubdate.strftime("%Y-%m-%d [%a] %H:%M")
         if len(comment[5]) == 0:
             comment[5] = settings.anon
         postnum = comment[2]

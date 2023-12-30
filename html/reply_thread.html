@@ -1,11 +1,22 @@
-<details><summary>New Reply</summary>
+<details class="replybox">
+  <summary>New Reply</summary>
   <p>
+<form action="/post" method="post">
+<input type="hidden" name="thread" value="{thread}">
+<input type="hidden" name="parent" value="{parent}">
 <table>
   <tr>
+  <td> Subject:
+  <td> <input type="text" style="width:20em;" name="subject"
+  placeholder="(optional)">
   <td> Name:
-  <td> <input type="text" name="name"> <input type="submit" value="Post">
+  <td> <input type="text" name="author" placeholder="{anon}">
   <tr>
   <td> Comment:
-  <td> <textarea></textarea>
+  <td colspan="3">
+  <textarea rows="7" cols="72" name="comment" required></textarea>
+  <tr>
+  <th colspan="4"><input type="submit" value="Post comment">  
 </table>
+</form>
 </details>

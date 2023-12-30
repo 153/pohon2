@@ -35,9 +35,16 @@ label {
 details {
     user-select: none;
     border: 2px solid black;
-    width: 350px;
     padding: 1em;
     background-color: #006666;
+}
+
+details.tagbox {
+    width: 350px;
+}
+
+details.replybox {
+    width: 40em;
 }
 
 details > p {
