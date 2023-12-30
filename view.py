@@ -19,12 +19,21 @@ def footer():
     output = page.format(title=settings.title)
     return output
 
-def mk_page(content):
+def ld_page(fn):
+    with open(f'./html/{fn}.html', "r") as data:
+        data = data.read()
+    return data
+
+def mk_page(content=None):
     """Return a page, wrapping it in the header and footer"""
     page = header()
     page += content
     page += footer()
     return page
+
+@view.route('/')
+def homepage():
+    return mk_page(ld_page("index"))
 
 def mk_tagbox():
     """Make checkboxes of tags for OP to use when creating a thread"""
