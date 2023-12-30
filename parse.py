@@ -40,7 +40,7 @@ def parse_thread(thread):
         postnum = comment[2]
         if postnum != "1":
             postnum = postnum.split(":")[-1]
-        postnum = f"<a href='#{comment[2]}' id='{postnum}'>#{postnum}.</a>"
+        postnum = f"<a href='/post/{thread}/{postnum}' id='{comment[2]}'>#{postnum}.</a>"
         comment = template.format(subject=comment[4],
                                   postnum=postnum,
                                   pubdate=pubdate,
