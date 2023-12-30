@@ -36,7 +36,7 @@ def new_thread(subject="", comment="", author="", tags=None):
     # Update the tags
     update_tags(thread, tags)
     
-    return "Thread posted successfully" 
+    return thread
 
 def update_log(ip, thread, time_reply, replynum,
                comment, subject, author):

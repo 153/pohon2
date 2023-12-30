@@ -63,7 +63,6 @@ def thread_head(thread):
     meta = parse.get_meta(thread)
     tags = meta[0]
     subject = meta[1]
-    print(meta)
     if " " in tags:
         tags = tags.split(" ")
         tags = [f" <i><a href='#'>#{t}</a></i>" for t in tags]
@@ -98,6 +97,7 @@ def show_tags():
         else:
             line += "thread"
         page.append(line)
+    page.append("</ul>")
     page = "\n".join(page)
     return mk_page(page)
 
@@ -168,7 +168,6 @@ def view_reply(thread, reply="1"):
 
     for r in replychain:
         comment = comments[r]
-        print(r, comment)
         postnum = "1"
         if ":" in comment[2]:
             postnum = comment[2].split(":")[-1]
@@ -218,7 +217,8 @@ def create_thread():
         tags = ["random"]
     result = post.new_thread(data["subject"], data["comment"],
                              data["author"], tags)
-    return "Thread posted"
+    output = ld_page("redirect").format(thread=result)
+    return mk_page(output)
 
 @view.route('/post', methods = ["POST"])
 def reply_thread():
@@ -234,9 +234,5 @@ def reply_thread():
     post.new_reply(data["thread"], data["comment"],
                    data["parent"], data["author"],
                    data["subject"])
-    print(data["thread"])
-    print(data["comment"])
-    print(data["parent"])
-    print(data["author"])
-    print(data["subject"])
-    return data
+    output = ld_page("redirect").format(thread=data["thread"])
+    return mk_page(output)
