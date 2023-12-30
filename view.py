@@ -107,7 +107,7 @@ def tree_index():
     with open("threads/index.txt") as index:
         index = index.read().splitlines()
     index = [i.split("<>") for i in index]
-    index = [f"<a href='/tree/{i[0]}'>{i[3]}</a> ({i[2]} comments)"
+    index = [f"<a href='/tree/{i[0]}'>{i[3]}</a> ({i[2]} replies)"
              for i in index]
     index = "<li>" + "<li>".join(index)
     page = f"<ul>{index}</ul>"
@@ -119,7 +119,7 @@ def thread_index():
     with open("threads/index.txt") as index:
         index = index.read().splitlines()
     index = [i.split("<>") for i in index]
-    index = [f"<a href='/thread/{i[0]}'>{i[3]}</a> ({i[2]} comments)"
+    index = [f"<a href='/thread/{i[0]}'>{i[3]}</a> ({i[2]} replies)"
              for i in index]
     index = "\n<li>" + "\n<li>".join(index)
     page = f"<ul>{index}\n</ul>\n"
