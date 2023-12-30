@@ -20,7 +20,7 @@ def parse_tree(thread):
         repnum = t[2]
         if ":" in repnum:
             repnum = repnum.split(":")[-1]
-        mkanchor = f"<a id='{t[2]}' href='#{t[2]}' title='{t[1]}'>&#128337 {repnum}.</a>"
+        mkanchor = f"<a id='{t[2]}' href='/post/{thread}/{repnum}' title='{t[1]}'>&#128337 {repnum}.</a>"
         skeleton[t[2]] = [mkanchor, t[4], t[3]]
     return tree.fmt_tree(skeleton)
 
@@ -34,7 +34,7 @@ def parse_thread(thread):
     comments = [t.split("<>") for t in topic[1:]]
     for comment in comments:
         pubdate = datetime.datetime.fromtimestamp(int(comment[1]))
-        pubdate = pubdate.strftime("%m-%d [%a] %H:%M")
+        pubdate = pubdate.strftime("%y-%m-%d [%a] %H:%M")
         if len(comment[5]) == 0:
             comment[5] = settings.anon
         postnum = comment[2]

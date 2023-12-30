@@ -1,3 +1,4 @@
+import datetime
 from flask import Blueprint, request
 import parse
 import post
@@ -31,10 +32,6 @@ def mk_page(content=None):
     page += footer()
     return page
 
-@view.route('/')
-def homepage():
-    return mk_page(ld_page("index"))
-
 def mk_tagbox():
     """Make checkboxes of tags for OP to use when creating a thread"""
     tags = settings.tags
@@ -61,7 +58,23 @@ def tag_list():
     tags.sort(key = lambda x: x[1], reverse = True)
     return tags
 
-@view.route('/tags')
+def thread_head(thread):
+    """Create a thread header, showing replies and tags"""
+    meta = parse.get_meta(thread)
+    subject = meta[1]
+    tags = meta[0].split(" ")
+    replies = meta[2] -1
+    if replies != 1:
+        replies = f"{replies} replies"
+    else:
+        replies = "1 reply"
+    return str([subject, tags, replies])
+
+@view.route('/')
+def homepage():
+    return mk_page(ld_page("index"))
+
+@view.route('/tags/')
 def show_tags():
     """Format the tag list for users"""
     tags = tag_list()
@@ -78,19 +91,7 @@ def show_tags():
     page = "\n".join(page)
     return mk_page(page)
 
-def thread_head(thread):
-    """Create a thread header, showing replies and tags"""
-    meta = parse.get_meta(thread)
-    subject = meta[1]
-    tags = meta[0].split(" ")
-    replies = meta[2] -1
-    if replies != 1:
-        replies = f"{replies} replies"
-    else:
-        replies = "1 reply"
-    return str([subject, tags, replies])
-
-@view.route('/tree')
+@view.route('/tree/')
 def tree_index():
     """Show a list of threads; clicking threads renders them as trees"""
     with open("threads/index.txt") as index:
@@ -147,15 +148,51 @@ def view_tree(thread, view="tree"):
 def view_reply(thread, reply="1"):
     # Show the target post, its parents, its children, and
     # a new reply box.
-    
-    replychain = reply.split(":")
+
+    reply = int(reply)
     with open(f"threads/{thread}.txt") as comments:
         comments = comments.read().splitlines()
+    if (reply < 1) or (reply > len(comments)):
+        return
     comments = [c.split("<>") for c in comments]
-    replychain = [comments[int(r)][1:] for r in replychain]
+    
+    with open("html/comment.html") as template:
+        template = template.read()
+    thread_subject = comments[0][1]
+
+    comment = comments[reply]
+    anc = comment[2]
+    replychain = [1]
+    if ":" in comment[2]:
+        replychain = [int(i) for i in comment[2].split(":")][::-1]
+    print(replychain)
+    replys = []
+
     for r in replychain:
-        print(r[1:])
-    return "ok"
+        comment = comments[r]
+        print(r, comment)
+        postnum = "1"
+        if ":" in comment[2]:
+            postnum = comment[2].split(":")[-1]
+        postnum = f"<a href='/post/{thread}/{postnum}'>#{postnum}.</a> "
+        pubdate = datetime.datetime.fromtimestamp(int(comment[1]))
+        pubdate = pubdate.strftime("%Y-%m-%d [%a] %H:%M")
+        if len(comment[5]) == 0:
+            comment[5] = settings.anon
+
+        replys.append(template.format(subject=comment[4],
+                           postnum=postnum,
+                           pubdate=pubdate,
+                           author=comment[5],
+                           comment=comment[3]))
+
+    page = f"<hr><h3><a href='/tree/{thread}#{anc}'>{thread_subject}</a></h3>"
+    page += replys[0] + "<p>"
+    page += ld_page("reply_thread")
+    page += "<hr>"
+    page += "<h3> Older Replies</h3>"
+    page += "<p>".join(replys[1:])
+    return mk_page(page)
 
 @view.route('/thread/<thread>')
 def view_thread(thread):
@@ -163,8 +200,7 @@ def view_thread(thread):
     page = parse.parse_thread(thread)
     return mk_page(page)
 
-# post.new_thread(subject, comment, author, tags)
-@view.route('/create', methods = ["POST", "GET"])
+@view.route('/create/', methods = ["POST", "GET"])
 def create_thread():
     """Allow a user to create a new thread"""
     if request.method == "GET":
@@ -182,7 +218,3 @@ def create_thread():
     result = post.new_thread(data["subject"], data["comment"],
                              data["author"], tags)
     return "Thread posted"
-
-if __name__ == "__main__":
-    show_tags()
-#print(mk_page(view_thread("1660449790")))
