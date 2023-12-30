@@ -107,6 +107,7 @@ def tree_index():
     with open("threads/index.txt") as index:
         index = index.read().splitlines()
     index = [i.split("<>") for i in index]
+    index.sort(key = lambda x: x[1], reverse=True)    
     index = [f"<a href='/tree/{i[0]}'>{i[3]}</a> ({i[2]} replies)"
              for i in index]
     index = "<li>" + "<li>".join(index)
@@ -119,6 +120,7 @@ def thread_index():
     with open("threads/index.txt") as index:
         index = index.read().splitlines()
     index = [i.split("<>") for i in index]
+    index.sort(key = lambda x: x[1], reverse=True)
     index = [f"<a href='/thread/{i[0]}'>{i[3]}</a> ({i[2]} replies)"
              for i in index]
     index = "\n<li>" + "\n<li>".join(index)
