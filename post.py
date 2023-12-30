@@ -18,7 +18,7 @@ def new_thread(subject="", comment="", author="", tags=None):
     post = "<>".join([ipaddr, thread, "1", comment, subject, author])
 
     # Write the thread file....
-    tfile = "\n".join([meta, post])
+    tfile = "\n".join([meta, post]) + "\n"
     with open(f"threads/{thread}.txt", "w") as threadfile:
         threadfile.write(tfile)
 
