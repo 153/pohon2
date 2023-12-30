@@ -2,7 +2,7 @@ body {
     background-color: #004040;
     color: #ffffff;
     font-family: monospace, monospace;
-    max-width: 999px;
+    max-width: 1050px;
     margin-left: 20px;
 }
 
@@ -37,6 +37,12 @@ details {
     border: 2px solid black;
     padding: 1em;
     background-color: #006666;
+}
+
+.threadnav {
+    padding: 1em;
+    background-color: #006666;
+    max-width: 18em;
 }
 
 details.tagbox {

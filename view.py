@@ -188,7 +188,7 @@ def view_reply(thread, reply="1"):
     page += replys[0] + "<p>"
     page += ld_page("reply_thread").format(anon=settings.anon, thread=thread, parent=anc)
     page += "<hr>"
-    page += "<h3>Older Replies</h3>"
+    page += "<h3>Context</h3>"
     page += "<p>".join(replys[1:])
     return mk_page(page)
 
