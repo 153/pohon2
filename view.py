@@ -61,14 +61,23 @@ def tag_list():
 def thread_head(thread):
     """Create a thread header, showing replies and tags"""
     meta = parse.get_meta(thread)
+    tags = meta[0]
     subject = meta[1]
-    tags = meta[0].split(" ")
+    print(meta)
+    if " " in tags:
+        tags = tags.split(" ")
+        tags = [f" <i><a href='#'>#{t}</a></i>" for t in tags]
+        tags = "".join(tags)
+    else:
+        tags = f" <i><a href='#'>#{tags}</a></i>"
+        
     replies = meta[2] -1
     if replies != 1:
         replies = f"{replies} replies"
     else:
         replies = "1 reply"
-    return str([subject, tags, replies])
+    template = ld_page("thread_head")
+    return template.format(subject=subject, replies=replies, tags=tags)
 
 @view.route('/')
 def homepage():
@@ -123,25 +132,12 @@ def view_tree(thread, view="tree"):
     with open(f"threads/{thread}.txt", "r") as data:
         data = data.read().splitlines()
     replycnt = len(data) - 2
-    
-    if replycnt != 1:
-        replycnt = f"({replycnt} replies)"
-    else:
-        replycnt = "(1 reply)"
-        
-    meta = parse.get_meta(thread)
-    tags = meta[0]    
-    subject = meta[1]
-    if " " in tags:
-        tags = tags.split(" ")
-        tags = [f" <a href='#'>#{t}</a>" for t in tags]
-        tags = "".join(tags)
-    else:
-        tags = f" <a href='#'>#{tags}</a>"
+
     # change parse_thread to parse_tree
     tree = parse.parse_tree(thread)
-    page = page.format(subject=subject, replycnt=replycnt,
-                       tags=tags, tree=tree, )
+    template = ld_page("tree")
+    page = thread_head(thread)
+    page += template.format(tree=tree, )
     return mk_page(page)
 
 @view.route('/post/<thread>/<reply>')
@@ -198,7 +194,9 @@ def view_reply(thread, reply="1"):
 @view.route('/thread/<thread>')
 def view_thread(thread):
     """View a thread in list mode"""
-    page = parse.parse_thread(thread)
+    page = ""
+    page += thread_head(thread)
+    page += parse.parse_thread(thread)
     return mk_page(page)
 
 @view.route('/create/', methods = ["POST", "GET"])
