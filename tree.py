@@ -119,16 +119,7 @@ def branch(node, comment, test=1):
         continue
     tail = "\n".join(tail)
     return "\n".join([head, tail])
-        
-#    if "boxur" in head and not head.startswith("&boxur;"):
-#        if not node[2][-1] == "&boxv;":
-#            comment[2] = "&emsp;" + comment[2]
 
-    # Make a loop for multiline comments
-    # tail = "&emsp;".join(node[2]) \
-#    tail = "&emsp;" + comment[2] \
-#        + "\n" + "&emsp;".join(node[2])
-#    return "\n".join([head, tail])
 
 def fmt_tree(tree):
     skeleton = mktree(tree)
@@ -138,6 +129,9 @@ def fmt_tree(tree):
     for n, i in enumerate(output):
         message = tree[i[0]]
         output[n] = branch(i, message)
+        if len(tree) == 1:
+            output[n] = output[n].replace("&emsp;&boxh;", "")
+            output[n] = output[n].replace("&boxv;", "&emsp;")
     return "\n".join(output)
 
 if __name__ == "__main__":

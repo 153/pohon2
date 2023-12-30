@@ -102,7 +102,7 @@ def tree_index():
     page = f"<ul>{index}</ul>"
     return mk_page(page)
 
-@view.route('/thread')
+@view.route('/thread/')
 def thread_index():
     """Show a list of threads; clicking threads renders them as lists"""
     with open("threads/index.txt") as index:
@@ -110,8 +110,8 @@ def thread_index():
     index = [i.split("<>") for i in index]
     index = [f"<a href='/thread/{i[0]}'>{i[3]}</a> ({i[2]} comments)"
              for i in index]
-    index = "<li>" + "<li>".join(index)
-    page = f"<ul>{index}</ul>"
+    index = "\n<li>" + "\n<li>".join(index)
+    page = f"<ul>{index}\n</ul>\n"
     return mk_page(page)
 
 @view.route('/tree/<thread>')
@@ -135,6 +135,8 @@ def view_tree(thread, view="tree"):
         tags = tags.split(" ")
         tags = [f" <a href='#'>#{t}</a>" for t in tags]
         tags = "".join(tags)
+    else:
+        tags = f" <a href='#'>#{tags}</a>"
     # change parse_thread to parse_tree
     tree = parse.parse_tree(thread)
     page = page.format(subject=subject, replycnt=replycnt,
