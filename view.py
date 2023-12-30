@@ -71,13 +71,14 @@ def thread_head(thread):
     else:
         tags = f" <i><a href='#'>#{tags}</a></i>"
         
-    replies = meta[2] -1
+    replies = meta[2]
     if replies != 1:
         replies = f"{replies} replies"
     else:
         replies = "1 reply"
     template = ld_page("thread_head")
-    return template.format(subject=subject, replies=replies, tags=tags)
+    return template.format(thread=thread, subject=subject,
+                           replies=replies, tags=tags, cnt=meta[2])
 
 @view.route('/')
 def homepage():
@@ -185,9 +186,9 @@ def view_reply(thread, reply="1"):
     page = f"<hr><h2>&#9939; <a href='/thread/{thread}'>{thread_subject}</a></h3>"
     page += f"Go back: <a href='/thread/{thread}#{anc}'>thread mode</a> | <a href='/tree/{thread}#{anc}'>tree mode</a><p>" 
     page += replys[0] + "<p>"
-    page += ld_page("reply_thread").format(anon=settings.anon, thread=thread, parent=anc)
+    page += ld_page("reply_thread").format(anon=settings.anon, thread=thread)
     page += "<hr>"
-    page += "<h3> Older Replies</h3>"
+    page += "<h3>Older Replies</h3>"
     page += "<p>".join(replys[1:])
     return mk_page(page)
 

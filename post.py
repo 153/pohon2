@@ -89,7 +89,8 @@ def new_reply(thread, comment, parent, author="", subject=""):
     ipaddr = "0.0"
     if not author:
         author = settings.anon
-        
+    comment = comment.replace("&", "&amp;").replace("<", "&lt;")\
+                    .replace("\n","<br>").replace("\r","")
     replynum = mk_replynum(thread, parent)
 
     update_log(ipaddr, thread, now, replynum, comment, subject, author)

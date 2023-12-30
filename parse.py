@@ -38,8 +38,14 @@ def parse_thread(thread):
         if len(comment[5]) == 0:
             comment[5] = settings.anon
         postnum = comment[2]
+        reply = ""
         if postnum != "1":
-            postnum = postnum.split(":")[-1]
+            postnum = postnum.split(":")
+            if postnum[-2] != "1":
+                chain = ":".join(postnum[:-1])
+                reply = f"<a href='#{chain}'>&gt;&gt;{postnum[-2]}</a><br>"
+            postnum = postnum[-1]
+        comment[3] = reply + comment[3]
         postnum = f"<a href='/post/{thread}/{postnum}' id='{comment[2]}'>#{postnum}.</a>"
         comment = template.format(subject=comment[4],
                                   postnum=postnum,
