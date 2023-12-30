@@ -71,6 +71,8 @@ def update_tags(thread, tags):
     taglist = [t.split(" ") for t in taglist]
     tagdic = {t[0]: t[1:] for t in taglist}
     for tag in tags:
+        if tag not in tagdic:
+            tagdic[tag] = []
         tagdic[tag].append(thread)
     tagfile = sorted([[t, *tagdic[t]] for t in tagdic], key=len)[::-1]
     tagfile = "\n".join([" ".join(t) for t in tagfile])
