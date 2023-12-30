@@ -162,7 +162,6 @@ def view_reply(thread, reply="1"):
     replychain = [1]
     if ":" in comment[2]:
         replychain = [int(i) for i in comment[2].split(":")][::-1]
-    print(replychain)
     replys = []
 
     for r in replychain:
@@ -186,7 +185,7 @@ def view_reply(thread, reply="1"):
     page = f"<hr><h2>&#9939; <a href='/thread/{thread}'>{thread_subject}</a></h3>"
     page += f"Go back: <a href='/thread/{thread}#{anc}'>thread mode</a> | <a href='/tree/{thread}#{anc}'>tree mode</a><p>" 
     page += replys[0] + "<p>"
-    page += ld_page("reply_thread").format(anon=settings.anon, thread=thread)
+    page += ld_page("reply_thread").format(anon=settings.anon, thread=thread, parent=anc)
     page += "<hr>"
     page += "<h3>Older Replies</h3>"
     page += "<p>".join(replys[1:])
