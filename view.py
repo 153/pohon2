@@ -66,10 +66,10 @@ def thread_head(thread):
     subject = meta[1]
     if " " in tags:
         tags = tags.split(" ")
-        tags = [f" <i><a href='#'>#{t}</a></i>" for t in tags]
+        tags = [f" <i><a href='/tags/{t}'>#{t}</a></i>" for t in tags]
         tags = "".join(tags)
     else:
-        tags = f" <i><a href='#'>#{tags}</a></i>"
+        tags = f" <i><a href='/tags/{tags}'>#{tags}</a></i>"
         
     replies = meta[2]
     if replies != 1:
@@ -102,7 +102,7 @@ def show_tags():
     page = "\n".join(page)
     return mk_page(page)
 
-@view.route('/tags/<tags>')
+@view.route('/tags/<tags>/')
 def tag_index(tags):
     tags = tags.split("+")
     
@@ -126,11 +126,11 @@ def tag_index(tags):
     tags = " ".join([f"+{tag}" for tag in tags])
     results = [[t, *results[t]] for t in results]
     results.sort(key = lambda x: x[1], reverse=True)
-    outstring = "<li> <a href='{0}'>{1} ({2} comments)</a>"
+    outstring = "<li> <a href='/thread/{0}'>{1}</a> ({2} comments)"
     for r in results:
         output.append(outstring.format(r[0], r[3], r[2]))
     output = "<ul>\n" + "\n".join(output) + "\n</ul>"
-    output = f"<h3>{tags}</h3>" + output
+    output = f"<h3>{tags} ({len(results)} threads)</h3>" + output
     print(output)
     
     return mk_page(output)
