@@ -73,14 +73,17 @@ def thread_edit(thread):
         return mk_page("Thread successfully deleted. "
                        "<p><a href='/admin/threads/'>Return</a>")
 
+    updates = [""]
     tags = request.form.getlist("tag")
-    edit_tags(thread, tags)
     deletes = request.form.getlist("d")
-    delete_comments(thread, deletes)
+    updates.append(edit_tags(thread, tags))
+    updates.append(delete_comments(thread, deletes))
     print(data)
 #    return(str(data))
-
-    return str(request.form)
+    updates = "<ul>" + "<li>".join(updates) + "</ul>"
+    updates += f"<meta http-equiv='refresh' content='5;URL=/admin/threads/{thread}/'>"
+    updates += f"<p><a href='/admin/threads/{thread}'>return in 5 seconds</a>"
+    return mk_page(updates)
 
 def thread_edit_page(thread):
     with open(f"threads/{thread}.txt", "r") as data:
@@ -168,7 +171,7 @@ def edit_tags(thread, ntags):
     add_list = ntags - tags
     del_list = tags - ntags
     if add_list == del_list:
-        return
+        return "No tags modified"
 
     with open("threads/tags.txt", "r") as tlist:
         tlist = tlist.read().splitlines()
@@ -196,12 +199,15 @@ def edit_tags(thread, ntags):
         newfile.write(convo)
     with open("threads/tags.txt", "w") as newfile:
         newfile.write(tlist)
+    return f"{len(add_list) + len(del_list)} tags modified"
 
 def delete_comments(thread, deletes):
     with open(f'threads/{thread}.txt', "r") as convo:
         convo = convo.read().splitlines()
     convo = [c.split("<>") for c in convo]
     deletes = [int(d) for d in deletes]
+    if len(deletes) == 0:
+        return "No comments deleted"
     for d in deletes:
         convo[d][3] = "<i>Message removed</i>"
         convo[d][4] = ""
@@ -209,3 +215,4 @@ def delete_comments(thread, deletes):
     convo = "\n".join(["<>".join(c) for c in convo]) + "\n"
     with open(f'threads/{thread}.txt', "w") as output:
         output = output.write(convo)
+    return f"{len(deletes)} comments deleted"
