@@ -75,6 +75,8 @@ def thread_edit(thread):
 
     tags = request.form.getlist("tag")
     edit_tags(thread, tags)
+    deletes = request.form.getlist("d")
+    delete_comments(thread, deletes)
     print(data)
 #    return(str(data))
 
@@ -104,11 +106,21 @@ def thread_edit_page(thread):
     tags = "\n".join(tagbox)
     tags = ld_page("tagbox").format(tags)
 
+    table = ["<p><table><tr border-bottom='4px solid black'>",
+             "<th><th>D<th>D+B<th>IP<th>Time<th>Comment"]
+    row = ld_page("mod_comments")
+    for n, c in enumerate(comments):
+        n += 1
+        comment = c[3].replace("<br>", "")[:50]
+        table.append(row.format(n, c[0], timestamp(c[1]), comment, thread))
+    table.append("</table>")
+    table = "\n".join(table)
+
     # render page
     output = ld_page("edit_thread")\
         .format(thread=thread, subject=meta[1], replies=meta[2],
                 tags=tags)
-    output += "<pre>" + str(str(meta) + "\n" + str(comments))
+    output += table
     return mk_page(output)
 
 def delete_thread(thread):
@@ -137,25 +149,22 @@ def delete_thread(thread):
         indexfile.write(index2)
 
 def edit_tags(thread, ntags):
-    print(ntags)
     if len(ntags) == 0:
         ntags = ["random"]
         
     with open(f"threads/{thread}.txt") as convo:
         convo = convo.read().splitlines()
     convo[0] = convo[0].split("<>")
-    
+
+    # turn old and new tag lists into sets
     tags = convo[0][0]
     if " " in tags:
         tags = set(tags.split(" "))
     else:
         tags = set([tags])
     ntags = set(ntags)
-#    if len(ntags) > 1:
-#        ntags = set(ntags)
-#    else:
-#        ntags = set(ntags)
-        
+
+    # see what threads need to be added or removed
     add_list = ntags - tags
     del_list = tags - ntags
     if add_list == del_list:
@@ -163,12 +172,10 @@ def edit_tags(thread, ntags):
 
     with open("threads/tags.txt", "r") as tlist:
         tlist = tlist.read().splitlines()
-    print("\n".join(tlist))
     tlist = [t.split(" ") for t in tlist]
     tlist = {t[0]: t[1:] for t in tlist}
 
-    print("++", add_list)
-    print("--", del_list)
+    # apply changes to big thread list
     for t in add_list:
         if t not in tlist:
             tlist[t] = []
@@ -177,9 +184,9 @@ def edit_tags(thread, ntags):
         if t not in tlist:
             continue
         tlist[t].remove(thread)
-    
     tlist = "\n".join([" ".join([t, *tlist[t]]) for t in tlist])
-    print("~~~", tlist)
+
+    # apply changes to thread file
     ntags = " ".join(ntags)
     convo[0][0] = ntags
     convo[0] = "<>".join(convo[0])
@@ -189,3 +196,16 @@ def edit_tags(thread, ntags):
         newfile.write(convo)
     with open("threads/tags.txt", "w") as newfile:
         newfile.write(tlist)
+
+def delete_comments(thread, deletes):
+    with open(f'threads/{thread}.txt', "r") as convo:
+        convo = convo.read().splitlines()
+    convo = [c.split("<>") for c in convo]
+    deletes = [int(d) for d in deletes]
+    for d in deletes:
+        convo[d][3] = "<i>Message removed</i>"
+        convo[d][4] = ""
+        convo[d][5] = "</b><i>Deleted</i><b>"
+    convo = "\n".join(["<>".join(c) for c in convo]) + "\n"
+    with open(f'threads/{thread}.txt', "w") as output:
+        output = output.write(convo)
