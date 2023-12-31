@@ -3,7 +3,7 @@ body {
     color: #ffffff;
     font-family: monospace, monospace;
     max-width: 1050px;
-    margin-left: 20px;
+    margin-left: 40px;
 }
 
 a, a:visited { color: #64D449;}
@@ -32,17 +32,17 @@ label {
     white-space: nowrap;
 }
 
+.threadnav {
+    padding: 1em;
+    background-color: #006666;
+    max-width: 18em;
+}
+
 details {
     user-select: none;
     border: 2px solid black;
     padding: 1em;
     background-color: #006666;
-}
-
-.threadnav {
-    padding: 1em;
-    background-color: #006666;
-    max-width: 18em;
 }
 
 details.tagbox {
@@ -59,7 +59,6 @@ details > p {
 }
 
 summary {
-//    display: flex;
     cursor: pointer;
     text-decoration: underline;
     color: cyan;
