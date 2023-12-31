@@ -1,23 +1,23 @@
 
 * Flask viewing
- * View a tree
- * View index
- * View a thread
- * View index
+ * View a tree		x
+ * View index		x
+ * View a thread	x
+ * View index		x
 
 * Flask posting
- * Make a thread
- * Reply to thread
+ * Make a thread	x
+ * Reply to thread	x
 
 * Tags
- * view a tag
- * post to tag
+ * view a tag		
+ * post to tag		x
  * filter tags
 
 * Admin
- * checkboxes
- * delete
- * ban
+ * checkboxes		x
+ * delete		x
+ * ban			x
  * Captcha
 
 * Tags
@@ -26,7 +26,7 @@
  * float view
 
 * Attachments
- * text
+ * text			x
  * single image
  * youtube
  * url
