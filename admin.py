@@ -89,7 +89,11 @@ def thread_edit(thread):
         delete_thread(data["thread"])
         return mk_page("Thread successfully deleted. "
                        "<p><a href='/admin/threads/'>Return</a>")
-
+    elif "mod" in data and data["mod"] == "deleteban":
+        ban_users(thread, [1])
+        delete_thread(data["thread"])
+        return mk_page("Thread successfully deleted and OP banned. "
+                       "<p><a href='/admin/threads/'>Return</a>")
     updates = [""]
     tags = request.form.getlist("tag")
     deletes = request.form.getlist("d")
