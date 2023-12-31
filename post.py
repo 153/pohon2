@@ -98,25 +98,3 @@ def new_reply(thread, comment, parent, author="", subject=""):
     update_log(ipaddr, thread, now, replynum, comment, subject, author)
     update_index(thread, now)
     update_thread(thread, ipaddr, now, replynum, comment, subject, author)
-
-def test_thread():
-    subject = "can this write threads"
-    comment = "hello world round two"
-    author = "dev"
-    tags = "tech spam web"
-    new_thread(subject, comment, author, tags)
-    
-def test_reply():
-    thread = "1688203002"
-    comment = "blah blah blah..."
-    parent = "1"
-    author = "Anon"
-    new_reply(thread, comment, parent, author)
-
-if __name__ == "__main__":
-    print(update_tags("1689920019", ["random", "meta"]))
-    
-#test_reply()
-#test_thread()
-#new_reply("1687588142", "It's just a fun place to hang out", "1:3")
-#new_reply("1688203002", "Testing the first comment now that tree/thread views are working.<br><br>Hello world!", "1", "Archduke", "Making progress")
