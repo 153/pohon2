@@ -135,7 +135,7 @@ def delete_thread(thread):
     # remove thread from index
     index = [i.split("<>") for i in index]
     index2 = ["<>".join(i) for i in index if i[0] != thread]
-    index2 = "\n".join(index2)
+    index2 = "\n".join(index2) + "\n"
     
     # remove thread from tags
     tags = [t.split(" ") for t in tags]
@@ -193,7 +193,7 @@ def edit_tags(thread, ntags):
     ntags = " ".join(ntags)
     convo[0][0] = ntags
     convo[0] = "<>".join(convo[0])
-    convo = "\n".join(convo)
+    convo = "\n".join(convo) + "\n"
 
     with open(f"threads/{thread}.txt", "w") as newfile:
         newfile.write(convo)
