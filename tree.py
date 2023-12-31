@@ -46,7 +46,8 @@ def mklvl(treed):
     return [head, body]
 
 def parse(tree):
-    tree = sorted(tree)
+    tree = sorted(tree, key=lambda d: tuple(map(int, d.split(":"))))
+    print(tree)
     tree_dic = {}
     for t in tree:
         lev = t.count(":")
