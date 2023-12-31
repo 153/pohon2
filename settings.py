@@ -5,3 +5,5 @@ tags = ["general", "random", "nsfw", "meta",
         "news", "shows", "music", "games",
         "otaku", "society", "internet", "diy",
         "paranormal"]
+
+password = "demo"

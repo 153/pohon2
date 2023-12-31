@@ -18,6 +18,12 @@ def check_login():
         return "<meta http-equiv='refresh' content='0;URL=/admin'>"
     return None
 
+@admin.route('/logout/')
+def logout():
+    response = make_response(redirect('/admin/'))
+    response.set_cookie("admin", "null")
+    return response
+
 @admin.route('/admin/', methods=["POST", "GET"])
 def login():
     checkpass = request.cookies.get("admin")

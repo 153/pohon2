@@ -152,6 +152,7 @@ def view_reply(thread, reply="1"):
         comments = comments.read().splitlines()
     if (reply < 1) or (reply > len(comments)):
         return
+    
     comments = [c.split("<>") for c in comments]
     template = ld_page("comment")
     thread_subject = comments[0][1]
