@@ -50,7 +50,7 @@ def menu():
 def threads():
     if check_login():
         return check_login()
-    with open("threads/index.txt") as index:
+    with open("data/index.txt") as index:
         index = index.read().splitlines()
     index = [i.split("<>") for i in index]
     index.sort(key = lambda x: x[1], reverse=True)
@@ -76,17 +76,20 @@ def thread_edit(thread):
     updates = [""]
     tags = request.form.getlist("tag")
     deletes = request.form.getlist("d")
+    bans = request.form.getlist("b")
+    deletes = list(set(bans + deletes))
     updates.append(edit_tags(thread, tags))
+    updates.append(ban_users(thread, bans))    
     updates.append(delete_comments(thread, deletes))
     print(data)
-#    return(str(data))
+
     updates = "<ul>" + "<li>".join(updates) + "</ul>"
     updates += f"<meta http-equiv='refresh' content='5;URL=/admin/threads/{thread}/'>"
     updates += f"<p><a href='/admin/threads/{thread}'>return in 5 seconds</a>"
     return mk_page(updates)
 
 def thread_edit_page(thread):
-    with open(f"threads/{thread}.txt", "r") as data:
+    with open(f"data/{thread}.txt", "r") as data:
         data = data.read().splitlines()
     meta = data[0].split("<>")
     comments = [d.split("<>") for d in data[1:]]
@@ -99,7 +102,8 @@ def thread_edit_page(thread):
     label = "<label for='{0}'>{1} {0}</label>"
     uncheck = "<input type='checkbox' name='tag' id='{0}' value='{0}'>"
     check = "<input type='checkbox' name='tag' id='{0}' value='{0}' checked>"
-    
+
+    # make tagbox 
     tagbox = []
     for tag in g_tags:
         if tag in t_tags:
@@ -109,6 +113,7 @@ def thread_edit_page(thread):
     tags = "\n".join(tagbox)
     tags = ld_page("tagbox").format(tags)
 
+    # make commentbox
     table = ["<p><table><tr border-bottom='4px solid black'>",
              "<th><th>D<th>D+B<th>IP<th>Time<th>Comment"]
     row = ld_page("mod_comments")
@@ -127,9 +132,9 @@ def thread_edit_page(thread):
     return mk_page(output)
 
 def delete_thread(thread):
-    with open("threads/index.txt") as index:
+    with open("data/index.txt") as index:
         index = index.read().splitlines()
-    with open("threads/tags.txt") as tags:
+    with open("data/tags.txt") as tags:
         tags = tags.read().splitlines()
 
     # remove thread from index
@@ -145,17 +150,17 @@ def delete_thread(thread):
     tags = "\n".join([" ".join(t) for t in tags])
 
     # delete thread file, write new index and tag files
-    os.remove(f"threads/{thread}.txt")
-    with open("threads/tags.txt", "w") as tagfile:
+    os.remove(f"data/{thread}.txt")
+    with open("data/tags.txt", "w") as tagfile:
         tagfile.write(tags)
-    with open("threads/index.txt", "w") as indexfile:
+    with open("data/index.txt", "w") as indexfile:
         indexfile.write(index2)
 
 def edit_tags(thread, ntags):
     if len(ntags) == 0:
         ntags = ["random"]
         
-    with open(f"threads/{thread}.txt") as convo:
+    with open(f"data/{thread}.txt") as convo:
         convo = convo.read().splitlines()
     convo[0] = convo[0].split("<>")
 
@@ -173,7 +178,7 @@ def edit_tags(thread, ntags):
     if add_list == del_list:
         return "No tags modified"
 
-    with open("threads/tags.txt", "r") as tlist:
+    with open("data/tags.txt", "r") as tlist:
         tlist = tlist.read().splitlines()
     tlist = [t.split(" ") for t in tlist]
     tlist = {t[0]: t[1:] for t in tlist}
@@ -195,14 +200,14 @@ def edit_tags(thread, ntags):
     convo[0] = "<>".join(convo[0])
     convo = "\n".join(convo) + "\n"
 
-    with open(f"threads/{thread}.txt", "w") as newfile:
+    with open(f"data/{thread}.txt", "w") as newfile:
         newfile.write(convo)
-    with open("threads/tags.txt", "w") as newfile:
+    with open("data/tags.txt", "w") as newfile:
         newfile.write(tlist)
     return f"{len(add_list) + len(del_list)} tags modified"
 
 def delete_comments(thread, deletes):
-    with open(f'threads/{thread}.txt', "r") as convo:
+    with open(f'data/{thread}.txt', "r") as convo:
         convo = convo.read().splitlines()
     convo = [c.split("<>") for c in convo]
     deletes = [int(d) for d in deletes]
@@ -213,6 +218,26 @@ def delete_comments(thread, deletes):
         convo[d][4] = ""
         convo[d][5] = "</b><i>Deleted</i><b>"
     convo = "\n".join(["<>".join(c) for c in convo]) + "\n"
-    with open(f'threads/{thread}.txt', "w") as output:
+    with open(f'data/{thread}.txt', "w") as output:
         output = output.write(convo)
     return f"{len(deletes)} comments deleted"
+
+def ban_users(thread, to_bans):
+    with open(f'data/{thread}.txt', "r") as convo:
+        convo = convo.read().splitlines()
+    convo = [c.split("<>") for c in convo]
+    to_bans = [int(b) for b in to_bans]
+    if len(to_bans) == 0:
+        return "No users banned"
+    bans = {}
+    brecord = []
+    for b in to_bans:
+        bans[convo[b][0]] = ["<>".join(convo[b][1:])]
+    for b in bans:
+        brecord.append(" ".join([b, str(bans[b])]))
+    brecord = "\n".join(brecord) + "\n"
+    with open('data/bans.txt', "a") as bandata:
+        bandata.write(brecord)
+    return f"{len(bans)} users banned."
+    
+    

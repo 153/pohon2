@@ -52,7 +52,7 @@ id="{0}" value="{0}">{0}</label>"""
 
 def tag_list():
     """Return a simple list of tags with the number of threads they have"""
-    with open("threads/tags.txt") as tags:
+    with open("data/tags.txt") as tags:
         tags = tags.read().splitlines()
     tags = [t.split(" ") for t in tags]
     tags = [[t[0], len(t[1:])] for t in tags]
@@ -105,7 +105,7 @@ def show_tags():
 @view.route('/tree/')
 def tree_index():
     """Show a list of threads; clicking threads renders them as trees"""
-    with open("threads/index.txt") as index:
+    with open("data/index.txt") as index:
         index = index.read().splitlines()
     index = [i.split("<>") for i in index]
     index.sort(key = lambda x: x[1], reverse=True)    
@@ -118,7 +118,7 @@ def tree_index():
 @view.route('/thread/')
 def thread_index():
     """Show a list of threads; clicking threads renders them as lists"""
-    with open("threads/index.txt") as index:
+    with open("data/index.txt") as index:
         index = index.read().splitlines()
     index = [i.split("<>") for i in index]
     index.sort(key = lambda x: x[1], reverse=True)
@@ -133,7 +133,7 @@ def view_tree(thread, view="tree"):
     """View a thread in tree mode"""
     page = ld_page("tree")
     try:
-        with open(f"threads/{thread}.txt", "r") as data:
+        with open(f"data/{thread}.txt", "r") as data:
             data = data.read().splitlines()
     except:
         return mk_page("404")
@@ -154,7 +154,7 @@ def view_reply(thread, reply="1"):
 
     reply = int(reply)
     try:
-        with open(f"threads/{thread}.txt") as comments:
+        with open(f"data/{thread}.txt") as comments:
             comments = comments.read().splitlines()
     except:
         return mk_page("404")
@@ -202,7 +202,7 @@ def view_reply(thread, reply="1"):
 @view.route('/thread/<thread>')
 def view_thread(thread):
     """View a thread in list mode"""
-    if not os.path.exists(f"threads/{thread}.txt"):
+    if not os.path.exists(f"data/{thread}.txt"):
         return mk_page("404")
     page = ""
     page += thread_head(thread)

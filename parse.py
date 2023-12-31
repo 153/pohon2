@@ -3,13 +3,13 @@ import tree
 import settings
 
 def get_meta(number):
-    with open(f"./threads/{number}.txt", "r") as meta:
+    with open(f"./data/{number}.txt", "r") as meta:
         meta = meta.readlines()
     meta = [*meta[0].split("<>"), len(meta) -1]
     return meta
 
 def parse_tree(thread):
-    with open(f"./threads/{thread}.txt", "r") as topic:
+    with open(f"./data/{thread}.txt", "r") as topic:
         topic = topic.read().splitlines()
     meta = topic[0].split("<>")
     topic = [t.split("<>") for t in topic[1:]]
@@ -26,7 +26,7 @@ def parse_tree(thread):
 
 def parse_thread(thread):
     output = []
-    with open(f"threads/{thread}.txt") as topic:
+    with open(f"data/{thread}.txt") as topic:
         topic = topic.read().splitlines()
     with open(f"html/comment.html") as template:
         template = template.read()
