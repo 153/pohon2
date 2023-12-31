@@ -133,14 +133,3 @@ def fmt_tree(tree):
             output[n] = output[n].replace("&emsp;&boxh;", "")
             output[n] = output[n].replace("&boxv;", "&emsp;")
     return "\n".join(output)
-
-if __name__ == "__main__":
-    with open("threads/1660449790.txt") as example:
-        example = example.read().splitlines()[1:]
-    example = [t.split("<>") for t in example]
-    skeleton = {t[2]: ["1", t[4], t[3]] for t in example}
-    fmt_tree(skeleton)
-    
-#print(fmt_tree(example))
-#print("<hr>")
-#fmt_list(example)
