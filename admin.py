@@ -62,6 +62,23 @@ def threads():
     page += "</ul>"
     return mk_page(page)
 
+@admin.route('/admin/bans', methods=["POST", "GET"])
+def manage_bans():
+    if check_login():
+        return check_login()
+    if request.method == "GET":
+        with open("data/bans.txt") as bans:
+            bans = bans.read()
+        output = ld_page("edit_bans")
+        return mk_page(output.format(bans))
+    data = request.form.copy()
+    banfile = data["bans"]
+    if banfile[:-2] != "\n":
+        banfile += "\n"
+    with open("data/bans.txt", "w") as bans:
+        bans.write(banfile)
+    return data
+
 @admin.route('/admin/threads/<thread>/', methods=["POST", "GET"])
 def thread_edit(thread):
     data = request.form.copy()
@@ -172,7 +189,7 @@ def edit_tags(thread, ntags):
         tags = set([tags])
     ntags = set(ntags)
 
-    # see what threads need to be added or removed
+    # see what tags thread needs to be added or removed
     add_list = ntags - tags
     del_list = tags - ntags
     if add_list == del_list:
@@ -232,12 +249,11 @@ def ban_users(thread, to_bans):
     bans = {}
     brecord = []
     for b in to_bans:
-        bans[convo[b][0]] = ["<>".join(convo[b][1:])]
+        bans[convo[b][0]] = ["<>".join([thread, *convo[b][1:]])]
     for b in bans:
         brecord.append(" ".join([b, str(bans[b])]))
     brecord = "\n".join(brecord) + "\n"
     with open('data/bans.txt', "a") as bandata:
         bandata.write(brecord)
     return f"{len(bans)} users banned."
-    
-    
+
