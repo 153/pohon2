@@ -1,4 +1,5 @@
 import datetime
+import os
 from flask import Blueprint, request
 import parse
 import post
@@ -131,8 +132,12 @@ def thread_index():
 def view_tree(thread, view="tree"):
     """View a thread in tree mode"""
     page = ld_page("tree")
-    with open(f"threads/{thread}.txt", "r") as data:
-        data = data.read().splitlines()
+    try:
+        with open(f"threads/{thread}.txt", "r") as data:
+            data = data.read().splitlines()
+    except:
+        return mk_page("404")
+    
     replycnt = len(data) - 2
 
     # change parse_thread to parse_tree
@@ -148,10 +153,14 @@ def view_reply(thread, reply="1"):
     # a new reply box.
 
     reply = int(reply)
-    with open(f"threads/{thread}.txt") as comments:
-        comments = comments.read().splitlines()
+    try:
+        with open(f"threads/{thread}.txt") as comments:
+            comments = comments.read().splitlines()
+    except:
+        return mk_page("404")
+    
     if (reply < 1) or (reply > len(comments)):
-        return
+        return mk_page("404")
     
     comments = [c.split("<>") for c in comments]
     template = ld_page("comment")
@@ -193,6 +202,8 @@ def view_reply(thread, reply="1"):
 @view.route('/thread/<thread>')
 def view_thread(thread):
     """View a thread in list mode"""
+    if not os.path.exists(f"threads/{thread}.txt"):
+        return mk_page("404")
     page = ""
     page += thread_head(thread)
     page += parse.parse_thread(thread)
