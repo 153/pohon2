@@ -130,8 +130,7 @@ def thread_index():
 @view.route('/tree/<thread>')
 def view_tree(thread, view="tree"):
     """View a thread in tree mode"""
-    with open("html/tree.html", "r") as page:
-        page = page.read()
+    page = ld_page("tree")
     with open(f"threads/{thread}.txt", "r") as data:
         data = data.read().splitlines()
     replycnt = len(data) - 2
@@ -154,9 +153,7 @@ def view_reply(thread, reply="1"):
     if (reply < 1) or (reply > len(comments)):
         return
     comments = [c.split("<>") for c in comments]
-    
-    with open("html/comment.html") as template:
-        template = template.read()
+    template = ld_page("template")
     thread_subject = comments[0][1]
 
     comment = comments[reply]
@@ -204,9 +201,8 @@ def view_thread(thread):
 def create_thread():
     """Allow a user to create a new thread"""
     if request.method == "GET":
-        with open("html/new_thread.html") as tform:
-            tform = tform.read()
-        tform = tform.format(mk_tagbox())
+        tform = ld_page("new_thread")
+        tform = tform.format(tags=mk_tagbox(), name=settings.anon)
         return mk_page(tform)
     data = request.form
     tags = request.form.getlist("tag")
