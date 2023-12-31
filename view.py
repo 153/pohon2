@@ -92,7 +92,7 @@ def show_tags():
     for t in tags:
         if t[1] == 0:
             continue
-        line = f"<li>{t[0]} - {t[1]} "
+        line = f"<li><a href='/tags/{t[0]}'>#{t[0]}</a> - {t[1]} "
         if t[1] > 1:
             line += "threads"
         else:
@@ -101,6 +101,39 @@ def show_tags():
     page.append("</ul>")
     page = "\n".join(page)
     return mk_page(page)
+
+@view.route('/tags/<tags>')
+def tag_index(tags):
+    tags = tags.split("+")
+    
+    with open("data/tags.txt") as tagdb:
+        tagdb = tagdb.read().splitlines()
+    tagdb = [t.split(" ") for t in tagdb]
+    tagdb = {t[0]: t[1:] for t in tagdb}
+    
+    with open("data/index.txt") as threaddb:
+        threaddb = threaddb.read().splitlines()
+    threaddb = [t.split("<>") for t in threaddb]
+    threaddb = {t[0]: t[1:] for t in threaddb}
+    
+    results = {}
+    output = []
+    for t in tags:
+        if t in tagdb:
+            for t2 in tagdb[t]:
+                results[t2] = [*threaddb[t2]]
+
+    tags = " ".join([f"+{tag}" for tag in tags])
+    results = [[t, *results[t]] for t in results]
+    results.sort(key = lambda x: x[1], reverse=True)
+    outstring = "<li> <a href='{0}'>{1} ({2} comments)</a>"
+    for r in results:
+        output.append(outstring.format(r[0], r[3], r[2]))
+    output = "<ul>\n" + "\n".join(output) + "\n</ul>"
+    output = f"<h3>{tags}</h3>" + output
+    print(output)
+    
+    return mk_page(output)
 
 @view.route('/tree/')
 def tree_index():
