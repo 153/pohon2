@@ -50,9 +50,12 @@ def approve(ip=0, key=""):
     with open("data/bans.txt") as bans:
         bans = bans.read().splitlines()
     bans = [b.split(" ")[0] if " " else b for b in bans]
-    iprange = ".".join(ip.split("."))[:3]
     for b in bans:
+        print(b, ip)
+        if len(b.strip()) < 3:
+            continue
         if ip.startswith(b):
+            print("!", b, ip)
             return False
     if ip in log:
         if len(log[ip]) == 3:
@@ -73,10 +76,12 @@ def show_captcha(hide=0, redir='.'):
     ip = get_ip()
     mylog = addlog(ip)
     out = ""
-    # fix this p.html stuff!
     if not hide:
         out = ld_page("captcha")
-    out += ld_page("captcha_form").format(mylog[ip][1], redir)
+    if not approve():
+        out += ld_page("captcha_form").format(mylog[ip][1], redir)
+    else:
+        out += "Your IP is approved for posting"
     if hide:
         return out
     return mk_page(out)
@@ -107,13 +112,14 @@ def check(redir=""):
     return out
 
 def flood(limit=60, mode="comment"):
+    # Completely rewrite this
     ip = get_ip()
     tnow = str(int(time.time()))
     with open("data/log.txt", "r") as log:                
         log = log.read().splitlines()
-    try: log = [x.split() for x in log]
+    try: log = [x.split("<>") for x in log]
     except: return False
-    log = [x for x in log if x[3] == ip]
+    log = [x for x in log if x[1] == ip]
     if mode == "comment":
         if not log: return False
         try: post = log[-1][3:5]
@@ -158,10 +164,3 @@ def get_comment_log():
         print(L)
     
     return log
-
-def user_rate(limit=60, mode="comment"):
-    ip = get_ip()
-    log = get_comment_log()
-    return
-    log = [i for i in log if i == ip]
-    print(log)
