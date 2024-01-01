@@ -8,6 +8,7 @@ from flask import Blueprint, request
 
 whitelist = Blueprint("whitelist", __name__)
 klen = settings.captchalen
+image = ImageCaptcha(fonts=['droid.ttf'])
 
 def get_ip():
     return request.headers.get('X-Forwarded-For', request.remote_addr)

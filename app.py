@@ -17,7 +17,7 @@ app.register_blueprint(whitelist)
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000)
     print("!", request)
-    files = ["log.txt", "index.txt", "tags.txt", "bans.txt"]
+    files = ["log.txt", "index.txt", "tags.txt", "bans.txt", "ips.txt"]
     for f in files:
         if not os.path.isfile(f"data/{f}"):
             with open(f"data/{f}", "w") as fp:
