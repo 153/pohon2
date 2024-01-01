@@ -72,8 +72,10 @@ def manage_bans():
         output = ld_page("edit_bans")
         return mk_page(output.format(bans))
     data = request.form.copy()
-    banfile = data["bans"]
-    if banfile[:-2] != "\n":
+    banfile = data["bans"].strip()
+    if len(banfile) == 0:
+        pass
+    elif banfile[:-2] != "\n":
         banfile += "\n"
     with open("data/bans.txt", "w") as bans:
         bans.write(banfile)

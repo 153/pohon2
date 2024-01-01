@@ -92,6 +92,7 @@ def refresh():
 
 @whitelist.route('/captcha/check', methods=['POST', 'GET'])
 def check(redir=""):
+    from view import ld_page, mk_page    
     key = request.args.get('key').lower()
     redir = request.args.get('redir')
     ip = get_ip()
@@ -109,7 +110,7 @@ def check(redir=""):
         if os.path.isfile(f"./static/cap/{ip}.png"):
             os.remove(f"./static/cap/{ip}.png")
 
-    return out
+    return mk_page(out)
 
 def flood(limit=60, mode="comment"):
     # Completely rewrite this
