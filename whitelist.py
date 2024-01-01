@@ -5,6 +5,7 @@ import time
 import settings
 from captcha.image import ImageCaptcha
 from flask import Blueprint, request
+from view import ld_page, mk_page
 
 whitelist = Blueprint("whitelist", __name__)
 klen = settings.captchalen
@@ -14,7 +15,7 @@ def get_ip():
     return request.headers.get('X-Forwarded-For', request.remote_addr)
 
 def randstr(length):
-    letters = "bcefgkmopswxz"
+    letters = "234578"
     key = "".join(list(random.choice(letters) for i in range(length)))
     return key
 
@@ -35,10 +36,11 @@ def addlog(ip, ig=0):
     if ip not in log or ig:
         entry = genkey(ip)
         log[ip] = entry
-        fi = "\n".join([" ".join([log[x] for x in log])])
+        print(log)
+        fi = "\n".join([" ".join(log[x]) for x in log])
         with open("data/ips.txt", "w") as iplog:
             iplog.write(fi)
-        return log
+    return log
 
 def approve(ip=0, key=""):
     if not ip:
@@ -67,17 +69,17 @@ def approve(ip=0, key=""):
     return False
 
 @whitelist.route('/captcha/')
-def show_captcha(hide=0, redir=''):
+def show_captcha(hide=0, redir='.'):
     ip = get_ip()
     mylog = addlog(ip)
     out = ""
     # fix this p.html stuff!
     if not hide:
-        out = p.html("captcha")
-    out += p.html("captcha-form").format(mylog[ip][1], redir)
+        out = ld_page("captcha")
+    out += ld_page("captcha_form").format(mylog[ip][1], redir)
     if hide:
         return out
-    return p.mk(out)
+    return mk_page(out)
 
 @whitelist.route('/captcha/refresh')
 def refresh():
@@ -85,8 +87,10 @@ def refresh():
     mylog = addlog(ip, 1)
     return "<meta http-equiv='refresh' content='0;URL=/captcha'>"
 
+@whitelist.route('/captcha/check', methods=['POST', 'GET'])
 def check(redir=""):
     key = request.args.get('key').lower()
+    redir = request.args.get('redir')
     ip = get_ip()
     log = ldlog()
     out = approve(ip, key)

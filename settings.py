@@ -8,4 +8,4 @@ tags = ["general", "random", "nsfw", "meta",
 
 password = "demo"
 
-captchalen = 6
+captchalen = 5

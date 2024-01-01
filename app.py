@@ -15,7 +15,7 @@ app.register_blueprint(admin)
 app.register_blueprint(whitelist)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000)
+    app.run(host="0.0.0.0", port=8000, debug=True)
     print("!", request)
     files = ["log.txt", "index.txt", "tags.txt", "bans.txt", "ips.txt"]
     for f in files:
