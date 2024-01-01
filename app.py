@@ -4,6 +4,7 @@ import os
 from flask import Flask, request
 from view import view
 from admin import admin
+from whitelist import whitelist
 
 app = Flask(__name__,
             static_url_path = "",
@@ -11,6 +12,7 @@ app = Flask(__name__,
 
 app.register_blueprint(view)
 app.register_blueprint(admin)
+app.register_blueprint(whitelist)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000)

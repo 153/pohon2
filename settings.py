@@ -7,3 +7,5 @@ tags = ["general", "random", "nsfw", "meta",
         "paranormal"]
 
 password = "demo"
+
+captchalen = 6
