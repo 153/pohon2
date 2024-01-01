@@ -5,7 +5,6 @@ import time
 import settings
 from captcha.image import ImageCaptcha
 from flask import Blueprint, request
-from view import ld_page, mk_page
 
 whitelist = Blueprint("whitelist", __name__)
 klen = settings.captchalen
@@ -73,11 +72,10 @@ def approve(ip=0, key=""):
 
 @whitelist.route('/captcha/')
 def show_captcha(hide=0, redir='.'):
+    from view import ld_page, mk_page
     ip = get_ip()
     mylog = addlog(ip)
     out = ""
-    if not hide:
-        out = ld_page("captcha")
     if not approve():
         out += ld_page("captcha_form").format(mylog[ip][1], redir)
     else:
@@ -105,7 +103,9 @@ def check(redir=""):
     elif out == True:
         out = "You filled out the captcha correctly!"
         out += "<p>Please <a href='/rules'>review the rules</a> before posting."
+        out += "<p>Redirecting in 3 seconds..."
         out += f"<hr><a href='{redir}'>back</a>"
+        out += f"<meta http-equiv='refresh' content='3;URL={redir}'>"
         if os.path.isfile(f"./static/cap/{ip}.png"):
             os.remove(f"./static/cap/{ip}.png")
 

@@ -4,6 +4,7 @@ from flask import Blueprint, request
 import parse
 import post
 import settings
+import whitelist as wl
 
 view = Blueprint("view", __name__)
 
@@ -183,6 +184,7 @@ def view_tree(thread, view="tree"):
 @view.route('/post/')
 def post_null():
     return '<meta http-equiv="refresh" content="0;URL=/">'
+
 @view.route('/post/<thread>/<reply>')
 def view_reply(thread, reply="1"):
     # Show the target post, its parents, its children, and
@@ -229,7 +231,10 @@ def view_reply(thread, reply="1"):
     page = f"<h2>&#9939; <a href='/thread/{thread}'>{thread_subject}</a></h3>"
     page += f"Go back: <a href='/thread/{thread}#{anc}'>thread mode</a> | <a href='/tree/{thread}#{anc}'>tree mode</a><p>" 
     page += replys[0] + "<p>"
-    page += ld_page("reply_thread").format(anon=settings.anon, thread=thread, parent=anc)
+    if wl.approve():
+        page += ld_page("reply_thread").format(anon=settings.anon, thread=thread, parent=anc)
+    else:
+        page += ld_page("reply_captcha").format(wl.show_captcha(1, f"/post/{thread}/{reply}"))
     page += "<hr>"
     page += "<h3>Parents</h3>"
     page += "<p>".join(replys[1:])
@@ -249,9 +254,13 @@ def view_thread(thread):
 def create_thread():
     """Allow a user to create a new thread"""
     if request.method == "GET":
-        tform = ld_page("new_thread")
-        tform = tform.format(tags=mk_tagbox(), name=settings.anon)
-        return mk_page(tform)
+        if wl.approve():
+            tform = ld_page("new_thread")
+            tform = tform.format(tags=mk_tagbox(), name=settings.anon)
+            return mk_page(tform)
+        else:
+            return wl.show_captcha(0, "/create/")
+            return "<meta http-equiv='refresh' content='0;URL=/captcha'>"
     data = request.form
     tags = request.form.getlist("tag")
     if not len(tags):
