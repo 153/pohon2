@@ -180,6 +180,9 @@ def view_tree(thread, view="tree"):
     page += template.format(tree=tree, )
     return mk_page(page)
 
+@view.route('/post/')
+def post_null():
+    return '<meta http-equiv="refresh" content="0;URL=/">'
 @view.route('/post/<thread>/<reply>')
 def view_reply(thread, reply="1"):
     # Show the target post, its parents, its children, and
@@ -223,7 +226,7 @@ def view_reply(thread, reply="1"):
                            author=comment[5],
                            comment=comment[3]))
 
-    page = f"<hr><h2>&#9939; <a href='/thread/{thread}'>{thread_subject}</a></h3>"
+    page = f"<h2>&#9939; <a href='/thread/{thread}'>{thread_subject}</a></h3>"
     page += f"Go back: <a href='/thread/{thread}#{anc}'>thread mode</a> | <a href='/tree/{thread}#{anc}'>tree mode</a><p>" 
     page += replys[0] + "<p>"
     page += ld_page("reply_thread").format(anon=settings.anon, thread=thread, parent=anc)
