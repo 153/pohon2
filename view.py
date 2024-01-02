@@ -268,6 +268,8 @@ def create_thread():
     tags = [t for t in tags if t in settings.tags]
     if not len(tags):
         tags = ["random"]
+    if wl.flood("thread"):
+        return mk_page(wl.flood("thread"))
     result = post.new_thread(data["subject"], data["comment"],
                              data["author"], tags)
     output = ld_page("redirect").format(thread=result)
@@ -284,6 +286,8 @@ def reply_thread():
         data["author"] = settings.anon
     if "subject" not in data:
         data["subject"] = ""
+    if wl.flood("comment"):
+        return mk_page(wl.flood("comment"))
     post.new_reply(data["thread"], data["comment"],
                    data["parent"], data["author"],
                    data["subject"])

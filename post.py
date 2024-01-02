@@ -2,12 +2,15 @@ from flask import request
 import time
 import settings
 import parse
+import whitelist as wl
 
 def new_thread(subject="", comment="", author="", tags=None):
     if None in [subject, comment]:
         return False
     if not tags:
         tags = ["random"]
+    if wl.flood("thread"):
+        return False
     ipaddr = request.remote_addr
     thread = str(int(time.time()))
     if not author:
@@ -87,6 +90,8 @@ def mk_replynum(thread, parent="1"):
     return ":".join([parent, replynum])
 
 def new_reply(thread, comment, parent, author="", subject=""):
+    if wl.flood("comment"):
+        return False
     now = str(int(time.time()))
     # get real ipaddr later on...
     ipaddr = request.remote_addr
