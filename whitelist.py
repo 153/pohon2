@@ -124,9 +124,11 @@ def flood(mode="comment"):
     if not log: return False
     
     if mode == "comment":
-        last = [x for x in log if ":" in x[3]][-1]
+        try: last = [x for x in log if ":" in x[3]][-1]
+        except: return False
     elif mode == "thread":
-        last = [x for x in log if not ":" in x[3]][-1]
+        try: last = [x for x in log if not ":" in x[3]][-1]
+        except: return False
     pause = int(tnow) - int(last[2])
     diff = limit - pause
     msg = diff
