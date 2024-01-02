@@ -11,7 +11,7 @@ def new_thread(subject="", comment="", author="", tags=None):
         tags = ["random"]
     if wl.flood("thread"):
         return False
-    ipaddr = request.remote_addr
+    ipaddr = wl.get_ip()
     thread = str(int(time.time()))
     if not author:
         author = settings.anon
@@ -94,7 +94,7 @@ def new_reply(thread, comment, parent, author="", subject=""):
         return False
     now = str(int(time.time()))
     # get real ipaddr later on...
-    ipaddr = request.remote_addr
+    ipaddr = wl.get_ip()
     if not author:
         author = settings.anon
     comment = comment.replace("&", "&amp;").replace("<", "&lt;")\
