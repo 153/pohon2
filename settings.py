@@ -9,3 +9,6 @@ tags = ["general", "random", "nsfw", "meta",
 password = "demo"
 
 captchalen = 5
+
+limit = {"thread": 5*60,
+         "comment": 60}

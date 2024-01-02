@@ -112,35 +112,32 @@ def check(redir=""):
 
     return mk_page(out)
 
-def flood(limit=60, mode="comment"):
+def flood(mode="comment"):
     # Completely rewrite this
     ip = get_ip()
     tnow = str(int(time.time()))
+    limit = settings.limit[mode]
     with open("data/log.txt", "r") as log:                
         log = log.read().splitlines()
-    try: log = [x.split("<>") for x in log]
-    except: return False
-    log = [x for x in log if x[1] == ip]
+    log = [x.split("<>") for x in log]
+    log = [x for x in log if x[0] == ip]
+    if not log: return False
+    
     if mode == "comment":
-        if not log: return False
-        try: post = log[-1][3:5]
-        except: return False
-        post[1] = post[1].split("<>")[0]
-        last = post
+        last = [x for x in log if ":" in x[3]][-1]
     elif mode == "thread":
-        try: threads = [x for x in log if (x[0] == "local") and (x[2] == "1")]
-        except: return False
-        if not threads: return False
-        thread = threads[-1][3:5]
-        thread[1] = thread[1].split("<>")[0]
-        last = thread
-    pause = int(tnow) - int(last[1])
+        last = [x for x in log if not ":" in x[3]][-1]
+    pause = int(tnow) - int(last[2])
     diff = limit - pause
+    msg = diff
     if diff > 60:
-        diff = f"{diff//60} minutes {diff %60}"
-    if pause < limit:
+        msg = f"{diff//60} minutes, {diff %60}"
+    print(diff)
+    if diff > 0:
+        print("flood")
+        print(msg)
         return "<b>Error: flood detected.</b>" \
-            + f"<p>Please wait {diff} seconds before trying to post again."
+            + f"<p>Please wait {msg} seconds before trying to post again."
     return False
 
 
