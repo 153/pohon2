@@ -13,9 +13,10 @@ captchalen = 5
 
 # How long users have to wait before making a new
 # thread / comment, in seconds
-limit = {"thread": 5*60,
-         "comment": 60}
+limit = {"thread": 0,
+         "comment": 0}
 
 length = {"short": 25,
-          "long": 3000
+          "long": 3000,
+          "line": 75
           }

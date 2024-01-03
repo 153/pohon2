@@ -292,8 +292,10 @@ def reply_thread():
         data["subject"] = ""
     if wl.flood("comment"):
         return mk_page(wl.flood("comment"))
-    post.new_reply(data["thread"], data["comment"],
+    error = post.new_reply(data["thread"], data["comment"],
                    data["parent"], data["author"],
                    data["subject"])
+    if error:
+        return error
     output = ld_page("redirect").format(thread=data["thread"])
     return mk_page(output)

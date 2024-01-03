@@ -9,6 +9,22 @@ def clean(msg, limit):
                     .replace("\n","<br>").replace("\r","")
     return msg[:limit]
 
+def line_check(msg):
+    if "<br>" in msg:
+        msg = msg.split("<br>")
+    else:
+        msg = [msg]
+    toolong = []
+    for n, m in enumerate(msg):
+        if len(m) > s.length["line"]:
+            toolong.append([f"line {n+1} {len(m) - s.length['line']}"\
+                            f" characters too long: "\
+                            f"{m[:s.length['line']]} "\
+                            f"{m[s.length['line']:]}"])
+    if len(toolong):
+        toolong = "<pre>" +str(toolong) + "</pre>"
+    return toolong
+                           
 def new_thread(subject="", comment="", author="", tags=None):
     if None in [subject, comment]:
         return False
@@ -21,6 +37,9 @@ def new_thread(subject="", comment="", author="", tags=None):
     if not author:
         author = s.anon
     comment = clean(comment, s.length["long"])
+    check = line_check(comment)
+    if len(check):
+        return check
     author = clean(author, s.length["short"])
     subject = clean(subject, s.length["short"])
     
@@ -105,6 +124,9 @@ def new_reply(thread, comment, parent, author="", subject=""):
     if not author:
         author = s.anon
     comment = clean(comment, s.length["long"])
+    check = line_check(comment)
+    if len(check):
+        return check
     author = clean(author, s.length["short"])
     subject = clean(subject, s.length["short"])
     
