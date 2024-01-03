@@ -85,6 +85,10 @@ def thread_head(thread):
 def homepage():
     return mk_page(ld_page("index"))
 
+@view.route('/about/')
+def about():
+    return mk_page(ld_page("about"))
+
 @view.route('/tags/')
 def show_tags():
     """Format the tag list for users"""
@@ -162,7 +166,7 @@ def thread_index():
     page = f"<ul>{index}\n</ul>\n"
     return mk_page(page)
 
-@view.route('/tree/<thread>')
+@view.route('/tree/<thread>/')
 def view_tree(thread, view="tree"):
     """View a thread in tree mode"""
     page = ld_page("tree")
@@ -240,7 +244,7 @@ def view_reply(thread, reply="1"):
     page += "<p>".join(replys[1:])
     return mk_page(page)
 
-@view.route('/thread/<thread>')
+@view.route('/thread/<thread>/')
 def view_thread(thread):
     """View a thread in list mode"""
     if not os.path.exists(f"data/{thread}.txt"):

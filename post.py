@@ -1,8 +1,13 @@
 from flask import request
 import time
-import settings
+import settings as s
 import parse
 import whitelist as wl
+
+def clean(msg, limit):
+    msg = msg.replace("&", "&amp;").replace("<", "&lt;")\
+                    .replace("\n","<br>").replace("\r","")
+    return msg[:limit]
 
 def new_thread(subject="", comment="", author="", tags=None):
     if None in [subject, comment]:
@@ -14,9 +19,11 @@ def new_thread(subject="", comment="", author="", tags=None):
     ipaddr = wl.get_ip()
     thread = str(int(time.time()))
     if not author:
-        author = settings.anon
-    comment = comment.replace("&", "&amp;").replace("<", "&lt;")\
-                    .replace("\n","<br>").replace("\r","")
+        author = s.anon
+    comment = clean(comment, s.length["long"])
+    author = clean(author, s.length["short"])
+    subject = clean(subject, s.length["short"])
+    
 #    comment = comment
     meta = "<>".join([" ".join(tags), subject])
     post = "<>".join([ipaddr, thread, "1", comment, subject, author])
@@ -93,10 +100,14 @@ def new_reply(thread, comment, parent, author="", subject=""):
     if wl.flood("comment"):
         return False
     now = str(int(time.time()))
-    # get real ipaddr later on...
+
     ipaddr = wl.get_ip()
     if not author:
-        author = settings.anon
+        author = s.anon
+    comment = clean(comment, s.length["long"])
+    author = clean(author, s.length["short"])
+    subject = clean(subject, s.length["short"])
+    
     comment = comment.replace("&", "&amp;").replace("<", "&lt;")\
                     .replace("\n","<br>").replace("\r","")
     replynum = mk_replynum(thread, parent)
