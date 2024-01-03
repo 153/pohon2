@@ -62,7 +62,7 @@ def threads():
     page += "</ul>"
     return mk_page(page)
 
-@admin.route('/admin/bans', methods=["POST", "GET"])
+@admin.route('/admin/bans/', methods=["POST", "GET"])
 def manage_bans():
     if check_login():
         return check_login()

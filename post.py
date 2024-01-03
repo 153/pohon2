@@ -108,8 +108,6 @@ def new_reply(thread, comment, parent, author="", subject=""):
     author = clean(author, s.length["short"])
     subject = clean(subject, s.length["short"])
     
-    comment = comment.replace("&", "&amp;").replace("<", "&lt;")\
-                    .replace("\n","<br>").replace("\r","")
     replynum = mk_replynum(thread, parent)
 
     update_log(ipaddr, thread, now, replynum, comment, subject, author)
