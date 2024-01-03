@@ -45,7 +45,7 @@ def new_thread(subject="", comment="", author="", tags=None):
         author = s.anon
     comment = clean(comment, s.length["long"])
     check = line_check(comment)
-    if len(check):
+    if check:
         return check
     author = clean(author, s.length["short"])
     subject = clean(subject, s.length["short"])
@@ -132,7 +132,7 @@ def new_reply(thread, comment, parent, author="", subject=""):
         author = s.anon
     comment = clean(comment, s.length["long"])
     check = line_check(comment)
-    if len(check):
+    if check:
         return check
     author = clean(author, s.length["short"])
     subject = clean(subject, s.length["short"])
