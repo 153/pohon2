@@ -4,7 +4,7 @@ tags = ["general", "random", "nsfw", "meta",
         "food", "tech", "life",
         "news", "shows", "music", "games",
         "otaku", "society", "internet", "diy",
-        "paranormal"]
+        "paranormal", "gikopoi"]
 
 # For /admin
 password = "demo"
@@ -15,3 +15,7 @@ captchalen = 5
 # thread / comment, in seconds
 limit = {"thread": 5*60,
          "comment": 60}
+
+length = {"short": 25,
+          "long": 3000
+          }

@@ -1,0 +1,8 @@
+data/bans.txt
+data/index.txt
+data/ips.txt
+data/log.txt
+settings.py
+
+*~
+\#*\#
