@@ -276,6 +276,8 @@ def create_thread():
         return mk_page(wl.flood("thread"))
     result = post.new_thread(data["subject"], data["comment"],
                              data["author"], tags)
+    if len(result) > 20:
+        return mk_page(result)
     output = ld_page("redirect").format(thread=result)
     return mk_page(output)
 
@@ -296,6 +298,6 @@ def reply_thread():
                    data["parent"], data["author"],
                    data["subject"])
     if error:
-        return error
+        return mk_page(error)
     output = ld_page("redirect").format(thread=data["thread"])
     return mk_page(output)

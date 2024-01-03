@@ -17,13 +17,20 @@ def line_check(msg):
     toolong = []
     for n, m in enumerate(msg):
         if len(m) > s.length["line"]:
-            toolong.append([f"line {n+1} {len(m) - s.length['line']}"\
-                            f" characters too long: "\
-                            f"{m[:s.length['line']]} "\
-                            f"{m[s.length['line']:]}"])
-    if len(toolong):
-        toolong = "<pre>" +str(toolong) + "</pre>"
-    return toolong
+            toolong.append([
+                f"Line {n+1} is {len(m) - s.length['line']}"\
+                f" characters too long:",
+                f"{m[:s.length['line']]}",
+                f"{m[s.length['line']:]}"])
+    
+    if not len(toolong):
+        return
+    with open("html/long_line.html") as longline:
+        longline = longline.read()
+    with open("html/long_error.html") as errorpage:
+        errorpage = errorpage.read()
+    toolong = "\n".join([longline.format(*m) for m in toolong])
+    return errorpage.format(s.length['line'], toolong)
                            
 def new_thread(subject="", comment="", author="", tags=None):
     if None in [subject, comment]:
