@@ -20,7 +20,7 @@ def parse_tree(thread):
         repnum = t[2]
         if ":" in repnum:
             repnum = repnum.split(":")[-1]
-        mkanchor = f"<a id='{t[2]}' href='/post/{thread}/{repnum}' title='{t[1]}'>&#128337 {repnum}.</a>"
+        mkanchor = f"<a id='{t[2]}' href='/post/{thread}/{repnum}' title='{t[1]}'>&#128337; {repnum}.</a>"
         skeleton[t[2]] = [mkanchor, t[4], t[3]]
     return tree.fmt_tree(skeleton)
 
