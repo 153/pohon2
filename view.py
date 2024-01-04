@@ -67,7 +67,7 @@ def thread_head(thread):
     subject = meta[1]
     if " " in tags:
         tags = tags.split(" ")
-        tags = [f" <i><a href='/tags/{t}'>#{t}</a></i>" for t in tags]
+        tags = [f" <i><a href='/tags/{t}/'>#{t}</a></i>" for t in tags]
         tags = "".join(tags)
     else:
         tags = f" <i><a href='/tags/{tags}'>#{tags}</a></i>"
@@ -97,7 +97,7 @@ def show_tags():
     for t in tags:
         if t[1] == 0:
             continue
-        line = f"<li><a href='/tags/{t[0]}'>#{t[0]}</a> - {t[1]} "
+        line = f"<li><a href='/tags/{t[0]}/'>#{t[0]}</a> - {t[1]} "
         if t[1] > 1:
             line += "threads"
         else:
@@ -131,7 +131,7 @@ def tag_index(tags):
     tags = " ".join([f"+{tag}" for tag in tags])
     results = [[t, *results[t]] for t in results]
     results.sort(key = lambda x: x[1], reverse=True)
-    outstring = "<li> <a href='/thread/{0}'>{1}</a> ({2} comments)"
+    outstring = "<li> <a href='/thread/{0}/'>{1}</a> ({2} comments)"
     for r in results:
         output.append(outstring.format(r[0], r[3], r[2]))
     output = "<ul>\n" + "\n".join(output) + "\n</ul>"
@@ -147,7 +147,7 @@ def tree_index():
         index = index.read().splitlines()
     index = [i.split("<>") for i in index]
     index.sort(key = lambda x: x[1], reverse=True)    
-    index = [f"<a href='/tree/{i[0]}'>{i[3]}</a> ({i[2]} replies)"
+    index = [f"<a href='/tree/{i[0]}/'>{i[3]}</a> ({i[2]} replies)"
              for i in index]
     index = "<li>" + "<li>".join(index)
     page = f"<ul>{index}</ul>"
@@ -160,7 +160,7 @@ def thread_index():
         index = index.read().splitlines()
     index = [i.split("<>") for i in index]
     index.sort(key = lambda x: x[1], reverse=True)
-    index = [f"<a href='/thread/{i[0]}'>{i[3]}</a> ({i[2]} replies)"
+    index = [f"<a href='/thread/{i[0]}/'>{i[3]}</a> ({i[2]} replies)"
              for i in index]
     index = "\n<li>" + "\n<li>".join(index)
     page = f"<ul>{index}\n</ul>\n"
