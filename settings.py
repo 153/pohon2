@@ -8,6 +8,7 @@ tags = ["general", "random", "nsfw", "meta",
 
 # For /admin
 password = "demo"
+url = "https://bbs.gikopoi.com/"
 
 captchalen = 5
 
