@@ -84,41 +84,42 @@ def mktree(tree):
             tree[1][m][-1] = chars["cross"]
         for n, j in enumerate(tree[1][m]):
             if j == 0:
-                tree[1][m][n] = "&emsp;"
+                tree[1][m][n] = chars["space"]
             elif j == 1:
                 tree[1][m][n] = chars["line"]
-        middle = [" ", chars["line"]]
+        middle = [chars["space"], chars["line"]]
         tree[2][m] = [middle[x] for x in tree[2][m]]
     tree[2][0] = [chars["line"]]
     return tree
 
 def branch(node, comment, test=1):
-    # comment: date, subject, comment
-    head = "&emsp;".join(node[1])
+    # comment: date, subject, comment          
+    head = chars["space"].join(node[1])
     if len(node[1]) > 0:
         head += chars['dash']
-
     tail = comment[2]
     if "<br>" in tail:
         tail = tail.split("<br>")
     else:
         tail = [tail]
-    tail.append(" ")
+    tail.append(chars["space"])
         
-    head += chars['square'] + "&emsp;" \
-         + comment[0] + " " + comment[1]
-
+    head += chars["square"] + chars["space"] \
+         + comment[0] + chars["space"] + comment[1]
+    hcount = head.count(chars["line"]) \
+        + head.count(chars["cross"])
+    tcount = node[2].count(chars["line"])
     for n, t in enumerate(tail):
-        if "boxur" in head and not head.startswith("&boxur;"):
-            if not node[2][-1] == "&boxv;":
-                t = "&emsp;&emsp;" + t
-            else:
-                t = "&emsp;&emsp;" + t
-        tail[n] = "&emsp;".join(node[2]) \
-            + "&emsp;" + t
+        if tcount > hcount:
+            t = chars["space"] + t
+        else:
+            t = chars["space"] + chars["space"] + t
+        tail[n] = chars["space"].join(node[2]) \
+            + chars["space"] + t
+        
         continue
-    tail = "\n".join(tail)
-    return "\n".join([head, tail])
+    tail = "<br>".join(tail)
+    return "<br>".join([head, tail])
 
 
 def fmt_tree(tree):
@@ -130,6 +131,6 @@ def fmt_tree(tree):
         message = tree[i[0]]
         output[n] = branch(i, message)
         if len(tree) == 1:
-            output[n] = output[n].replace("&emsp;&boxh;", "")
-            output[n] = output[n].replace("&boxv;", "&emsp;")
-    return "\n".join(output)
+            output[n] = output[n].replace(f"{chars['space']}{chars['dash']}", "")
+            output[n] = output[n].replace(chars["line"], chars["space"])
+    return "<br>".join(output)
