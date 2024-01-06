@@ -35,6 +35,8 @@ hr {
 
 label {
     white-space: nowrap;
+    position: sticky;
+    top: 10%;
 }
 
 .threadnav {
