@@ -78,5 +78,6 @@ summary {
 
 .trip {
     font-weight: normal;
+    font-style: normal;
     border-bottom: 1px dashed;
 }
