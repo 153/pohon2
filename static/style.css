@@ -68,3 +68,8 @@ summary {
     text-decoration: underline;
     color: cyan;
 }
+
+.sage {
+    font-weight: normal;
+    font-style: italic;
+}

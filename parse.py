@@ -33,10 +33,15 @@ def parse_thread(thread):
     meta = topic[0].split("<>")
     comments = [t.split("<>") for t in topic[1:]]
     for comment in comments:
+        sage = False
+        if len(comment) > 6:
+            sage = True
         pubdate = datetime.datetime.fromtimestamp(int(comment[1]))
         pubdate = pubdate.strftime("%Y-%m-%d [%a] %H:%M")
         if len(comment[5]) == 0:
             comment[5] = settings.anon
+        if sage:
+            comment[5] = f"<span class='sage'>{comment[5]}</span>"
         postnum = comment[2]
         reply = ""
         if postnum != "1":

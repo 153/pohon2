@@ -195,6 +195,7 @@ def view_reply(thread, reply="1"):
     # Show the target post, its parents, its children, and
     # a new reply box.
 
+    sage = False
     reply = int(reply)
     try:
         with open(f"data/{thread}.txt") as comments:
@@ -210,6 +211,8 @@ def view_reply(thread, reply="1"):
     thread_subject = comments[0][1]
 
     comment = comments[reply]
+    if len(comment) > 6:
+        sage = True
     anc = comment[2]
     replychain = [1]
     if ":" in comment[2]:
@@ -226,6 +229,8 @@ def view_reply(thread, reply="1"):
         pubdate = pubdate.strftime("%Y-%m-%d [%a] %H:%M")
         if len(comment[5]) == 0:
             comment[5] = settings.anon
+        if sage:
+            comment[5] = f"<span class='sage'>{comment[5]}</span>"
 
         replys.append(template.format(subject=comment[4],
                            postnum=postnum,
@@ -284,6 +289,7 @@ def create_thread():
 
 @view.route('/post', methods = ["POST"])
 def reply_thread():
+    sage = False
     data = request.form.copy()
     if None in [data["thread"], data["comment"]]:
         return None
@@ -293,11 +299,14 @@ def reply_thread():
         data["author"] = settings.anon
     if "subject" not in data:
         data["subject"] = ""
+    if "sage" in data:
+        print(data["sage"])
+        sage = True
     if wl.flood("comment"):
         return mk_page(wl.flood("comment"))
     error = post.new_reply(data["thread"], data["comment"],
-                   data["parent"], data["author"],
-                   data["subject"])
+                           data["parent"], data["author"],
+                           data["subject"], sage)
     if error:
         return mk_page(error)
     output = ld_page("redirect").format(thread=data["thread"])
@@ -306,11 +315,13 @@ def reply_thread():
 @view.route('/recent/')
 def recent_posts():
     with open("data/log.txt") as posts:
-        posts = posts.read().splitlines()[::-1][-20:]
+        posts = posts.read().splitlines()[::-1]
     posts = [p.split("<>") for p in posts]
     output = ["<h3>Last 30 posts</h3>"]
     ctemp = ld_page("comment")
     for p in posts:
+        if len(p) > 7:
+            continue
         pubdate = time.strftime("%Y-%m-%d [%a] %H:%M",
                                 time.gmtime(int(p[2])))
         replynum = p[3]

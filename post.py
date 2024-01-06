@@ -76,28 +76,33 @@ def new_thread(subject="", comment="", author="", tags=None):
     return thread
 
 def update_log(ip, thread, time_reply, replynum,
-               comment, subject, author):
+               comment, subject, author, sage=False):
     line = "<>".join([ip, thread, time_reply, replynum,
                       comment, subject, author])
+    if sage:
+        line += "<>1"
     line = line + "\n"
     with open("data/log.txt", "a") as log:
         log.write(line)
 
-def update_index(thread, time_reply):    
+def update_index(thread, time_reply, sage=False):    
     with open("data/index.txt") as indexf:
         indexf = indexf.read().splitlines()
     indexf = [i.split("<>") for i in indexf if len(i.strip())]
     indexdic = {i[0]: i[1:] for i in indexf}
-    indexdic[thread][0] = time_reply    
+    if not sage:
+        indexdic[thread][0] = time_reply    
     indexdic[thread][1] = str(int(indexdic[thread][1]) + 1)
     indexf = "\n".join(["<>".join([i[0], *indexdic[i[0]]]) for i in indexf])
     with open("data/index.txt", "w") as index:
         index.write(indexf)
 
 def update_thread(thread, ipaddr, time_reply, replynum,
-                  comment, subject, author):
+                  comment, subject, author, sage=False):
     t_line = "<>".join([ipaddr, time_reply, replynum,
                         comment, subject, author])
+    if sage:
+        t_line += "<>1"
     t_line = t_line + "\n"
     with open(f"data/{thread}.txt", "a") as t_file:
         t_file.write(t_line)
@@ -122,7 +127,7 @@ def mk_replynum(thread, parent="1"):
     replynum = str(len(tfile))
     return ":".join([parent, replynum])
 
-def new_reply(thread, comment, parent, author="", subject=""):
+def new_reply(thread, comment, parent, author="", subject="", sage=False):
     if wl.flood("comment"):
         return False
     now = str(int(time.time()))
@@ -139,6 +144,6 @@ def new_reply(thread, comment, parent, author="", subject=""):
     
     replynum = mk_replynum(thread, parent)
 
-    update_log(ipaddr, thread, now, replynum, comment, subject, author)
-    update_index(thread, now)
-    update_thread(thread, ipaddr, now, replynum, comment, subject, author)
+    update_log(ipaddr, thread, now, replynum, comment, subject, author, sage)
+    update_index(thread, now, sage)
+    update_thread(thread, ipaddr, now, replynum, comment, subject, author, sage)
