@@ -47,8 +47,8 @@ def new_thread(subject="", comment="", author="", tags=None):
     check = line_check(comment)
     if check:
         return check
-    author = clean(author, s.length["short"])
-    subject = clean(subject, s.length["short"])
+    author = clean(author, s.length["name"])
+    subject = clean(subject, s.length["subject"])
     
 #    comment = comment
     meta = "<>".join([" ".join(tags), subject])
@@ -134,8 +134,8 @@ def new_reply(thread, comment, parent, author="", subject=""):
     check = line_check(comment)
     if check:
         return check
-    author = clean(author, s.length["short"])
-    subject = clean(subject, s.length["short"])
+    author = clean(author, s.length["name"])
+    subject = clean(subject, s.length["subject"])
     
     replynum = mk_replynum(thread, parent)
 

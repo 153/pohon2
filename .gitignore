@@ -1,8 +1,6 @@
-data/bans.txt
-data/index.txt
-data/ips.txt
-data/log.txt
+data/*
 settings.py
+static/cap/*
 
 *~
 \#*\#

@@ -7,17 +7,18 @@ tags = ["general", "random", "nsfw", "meta",
         "paranormal", "gikopoi"]
 
 # For /admin
-password = "demo"
 url = "https://bbs.gikopoi.com/"
+password = "demo"
 
 captchalen = 5
 
 # How long users have to wait before making a new
 # thread / comment, in seconds
-limit = {"thread": 0,
-         "comment": 0}
+limit = {"thread": 60*60, # 1 hour
+         "comment": 60} # 1 minute
 
-length = {"short": 25,
-          "long": 3000,
-          "line": 75
+length = { "name": 20,
+           "subject": 40,
+           "long": 3000,
+           "line": 75
           }
