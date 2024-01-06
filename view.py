@@ -303,7 +303,7 @@ def reply_thread():
     output = ld_page("redirect").format(thread=data["thread"])
     return mk_page(output)
 
-@view.route('/recent')
+@view.route('/recent/')
 def recent_posts():
     with open("data/log.txt") as posts:
         posts = posts.read().splitlines()[::-1][-20:]
