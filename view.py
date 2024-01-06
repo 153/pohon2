@@ -1,3 +1,4 @@
+import time
 import datetime
 import os
 from flask import Blueprint, request
@@ -301,3 +302,24 @@ def reply_thread():
         return mk_page(error)
     output = ld_page("redirect").format(thread=data["thread"])
     return mk_page(output)
+
+@view.route('/recent')
+def recent_posts():
+    with open("data/log.txt") as posts:
+        posts = posts.read().splitlines()[::-1]
+    posts = [p.split("<>") for p in posts]
+    output = []
+    ctemp = ld_page("comment")
+    for p in posts:
+        pubdate = time.strftime("%Y-%m-%d [%a] %H:%M",
+                                time.gmtime(int(p[2])))
+        replynum = p[3]
+        if ":" in replynum:
+            replynum = replynum.split(":")[-1]
+        postnum = f"<a href='/thread/{p[1]}#{p[3]}'>{replynum}.</a>"
+        post = ctemp.format(postnum=postnum, subject=p[5],
+                            pubdate=pubdate, author=p[6],
+                            comment=p[4])
+        output.append(post)
+    return mk_page("\n".join(output))
+        
