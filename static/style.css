@@ -35,14 +35,14 @@ hr {
 
 label {
     white-space: nowrap;
-    position: sticky;
-    top: 10%;
 }
 
 .threadnav {
     padding: 1em;
     background-color: #006666;
     max-width: 18em;
+    position: sticky;
+    top: 10%;    
 }
 
 details {
