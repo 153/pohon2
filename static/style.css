@@ -73,3 +73,8 @@ summary {
     font-weight: normal;
     font-style: italic;
 }
+
+.trip {
+    font-weight: normal;
+    border-bottom: 1px dashed;
+}

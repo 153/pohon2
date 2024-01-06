@@ -1,5 +1,6 @@
 from flask import request
 import time
+import crypt
 import settings as s
 import parse
 import whitelist as wl
@@ -8,6 +9,24 @@ def clean(msg, limit):
     msg = msg.replace("&", "&amp;").replace("<", "&lt;")\
                     .replace("\n","<br>").replace("\r","")
     return msg[:limit]
+
+def tripcode(author):
+    if not "#" in author:
+        if "◆" in author:
+            author = author.replace("◆", "&#9671;")
+        return author
+    author = author.split("#")
+    if "◆" in author[0]:
+        author[0] = author[0].replace("◆", "&#9671;")
+    if "&#9671;" in author[1]:
+        author[1].replace("&#9671", "◆")
+    pw = author[1][:8]
+    salt = (pw + "H.")[1:3]
+    trip = crypt.crypt(pw, salt)[-10:]
+    trip = f"<span class='trip' title='tripcode'>{trip}</span>"
+    author = "&#9670;".join([author[0], trip])
+    return author
+    
 
 def line_check(msg):
     if "<br>" in msg:
@@ -48,6 +67,7 @@ def new_thread(subject="", comment="", author="", tags=None):
     if check:
         return check
     author = clean(author, s.length["name"])
+    author = tripcode(author)
     subject = clean(subject, s.length["subject"])
     
 #    comment = comment
@@ -140,6 +160,7 @@ def new_reply(thread, comment, parent, author="", subject="", sage=False):
     if check:
         return check
     author = clean(author, s.length["name"])
+    author = tripcode(author)
     subject = clean(subject, s.length["subject"])
     
     replynum = mk_replynum(thread, parent)
