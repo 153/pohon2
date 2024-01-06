@@ -306,9 +306,9 @@ def reply_thread():
 @view.route('/recent')
 def recent_posts():
     with open("data/log.txt") as posts:
-        posts = posts.read().splitlines()[::-1]
+        posts = posts.read().splitlines()[::-1][-20:]
     posts = [p.split("<>") for p in posts]
-    output = []
+    output = ["<h3>Last 30 posts</h3>"]
     ctemp = ld_page("comment")
     for p in posts:
         pubdate = time.strftime("%Y-%m-%d [%a] %H:%M",
@@ -321,5 +321,6 @@ def recent_posts():
                             pubdate=pubdate, author=p[6],
                             comment=p[4])
         output.append(post)
+    
     return mk_page("\n".join(output))
         
