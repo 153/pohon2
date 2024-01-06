@@ -154,6 +154,17 @@ def thread_edit_page(thread):
     output += table
     return mk_page(output)
 
+def delete_log_line(thread, post, isthread=False):
+    with open("data/log.txt", "r") as log:
+        log = log.read().splitlines()
+    log = [l.split("<>") for l in log]
+    log = [l for l in log if ([l[1], l[2]] != [thread, post])]
+    if isthread:
+        log = [l for l in log if (l[1] != thread)]
+    log = "\n".join(["<>".join(l) for l in log]) + "\n"
+    with open("data/log.txt", "w") as newlog:
+        newlog.write(log)
+
 def delete_thread(thread):
     with open("data/index.txt") as index:
         index = index.read().splitlines()
@@ -179,6 +190,8 @@ def delete_thread(thread):
     with open("data/index.txt", "w") as indexfile:
         indexfile.write(index2)
 
+    # remove from log
+    delete_log_line(thread, thread, True)
 def edit_tags(thread, ntags):
     if len(ntags) == 0:
         ntags = ["random"]
@@ -234,15 +247,19 @@ def delete_comments(thread, deletes):
         convo = convo.read().splitlines()
     convo = [c.split("<>") for c in convo]
     deletes = [int(d) for d in deletes]
+    postdates = []
     if len(deletes) == 0:
         return "No comments deleted"
     for d in deletes:
         convo[d][3] = "<i>Message removed</i>"
         convo[d][4] = ""
         convo[d][5] = "</b><i>Deleted</i><b>"
+        postdates.append([thread, convo[d][1]])
     convo = "\n".join(["<>".join(c) for c in convo]) + "\n"
     with open(f'data/{thread}.txt', "w") as output:
         output = output.write(convo)
+    for p in postdates:
+        delete_log_line(*p)
     return f"{len(deletes)} comments deleted"
 
 def ban_users(thread, to_bans):
