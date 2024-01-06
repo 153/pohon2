@@ -314,8 +314,15 @@ def recent_posts():
         pubdate = time.strftime("%Y-%m-%d [%a] %H:%M",
                                 time.gmtime(int(p[2])))
         replynum = p[3]
+        parent = ""
         if ":" in replynum:
-            replynum = replynum.split(":")[-1]
+            replynum = replynum.split(":")
+            if replynum[-2] != "1":
+                parent = replynum[-2]
+                parentnum = ":".join(replynum[:-1])
+                parent = f"<a href='/thread/{p[1]}#{parentnum}'>&gt;&gt;{parent}</a><br>"
+                p[4] = parent + p[4]
+            replynum = replynum[-1]
         postnum = f"<a href='/thread/{p[1]}#{p[3]}'>{replynum}.</a>"
         post = ctemp.format(postnum=postnum, subject=p[5],
                             pubdate=pubdate, author=p[6],
