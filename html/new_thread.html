@@ -1,13 +1,16 @@
 <div class="new-thread">
   <h3> New text thread</h3>
 <form action="/create/" method="post">
-Subject: <input name="subject" type="text" required>
-<br> Author: &emsp;<input name="author" placeholder="{name}" type="text">
+Subject: <input name="subject" type="text"
+		maxlength="{subject}" required>
+<br> Author: &emsp;<input name="author"
+	placeholder="{author}" type="text" maxlength="{name}">
 <p>
 {tags}
 <p>
   Your message:<br>
-<textarea name="comment" rows="5" cols="70" required></textarea>
+  <textarea name="comment" rows="5" cols="70"
+	    maxlength="{comment}" required></textarea>
 <p>
   <input type="submit" value="Post thread">
 </form>

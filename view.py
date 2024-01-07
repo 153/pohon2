@@ -241,7 +241,12 @@ def view_reply(thread, reply="1"):
     page += f"Go back: <a href='/thread/{thread}#{anc}'>thread mode</a> | <a href='/tree/{thread}#{anc}'>tree mode</a><p>" 
     page += replys[0] + "<p>"
     if wl.approve():
-        page += ld_page("reply_thread").format(anon=settings.anon, thread=thread, parent=anc)
+        page += ld_page("reply_thread").format(
+            anon=settings.anon, thread=thread, parent=anc,
+            subject = str(settings.length["subject"]),
+            name = str(settings.length["name"]),
+            comment = str(settings.length["long"])
+        )
     else:
         page += ld_page("reply_captcha").format(wl.show_captcha(1, f"/post/{thread}/{reply}"))
     page += "<hr>"
@@ -265,7 +270,12 @@ def create_thread():
     if request.method == "GET":
         if wl.approve():
             tform = ld_page("new_thread")
-            tform = tform.format(tags=mk_tagbox(), name=settings.anon)
+            tform = tform.format(tags=mk_tagbox(),
+                        author=settings.anon,
+                        subject = str(settings.length["subject"]),
+                        name = str(settings.length["name"]),
+                        comment = str(settings.length["long"])
+                                 )
             return mk_page(tform)
         else:
             return wl.show_captcha(0, "/create/")

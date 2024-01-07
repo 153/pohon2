@@ -8,13 +8,15 @@
   <tr>
   <td> Subject:
   <td> <input type="text" style="width:20em;" name="subject"
-  placeholder="(optional)">
+  placeholder="(optional)" maxlength="{subject}">
   <td> Name:
-  <td> <input type="text" name="author" placeholder="{anon}">
+  <td> <input type="text" name="author" placeholder="{anon}"
+	      maxlength="{name}">
   <tr>
   <td> Comment:
   <td colspan="3">
-  <textarea rows="7" cols="72" name="comment" required></textarea>
+  <textarea rows="7" cols="72" name="comment"
+	    maxlength="{comment}" required></textarea>
   <tr>
     <th colspan="4">
       <input type="submit" value="Post comment">
