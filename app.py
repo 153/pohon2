@@ -7,6 +7,10 @@ from admin import admin
 from whitelist import whitelist
 from atom import atom
 
+import logging
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
+
 app = Flask(__name__,
             static_url_path = "",
             static_folder = "static",)
