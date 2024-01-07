@@ -32,7 +32,8 @@ def parse_thread(thread):
         template = template.read()
     meta = topic[0].split("<>")
     comments = [t.split("<>") for t in topic[1:]]
-    for comment in comments:
+    ccount = len(comments) - 1
+    for n, comment in enumerate(comments):
         sage = False
         if len(comment) > 6:
             sage = True
@@ -52,6 +53,8 @@ def parse_thread(thread):
             postnum = postnum[-1]
         comment[3] = reply + comment[3]
         postnum = f"<a href='/post/{thread}/{postnum}' id='{comment[2]}'>#{postnum}.</a>"
+        if n == ccount:
+            postnum += "<a id='bottom'>"
         comment = template.format(subject=comment[4],
                                   postnum=postnum,
                                   pubdate=pubdate,

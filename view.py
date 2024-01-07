@@ -317,7 +317,7 @@ def reply_thread():
                            data["subject"], sage)
     if error:
         return mk_page(error)
-    output = ld_page("redirect").format(thread=data["thread"])
+    output = ld_page("redirect").format(thread=data["thread"] + "#bottom")
     return mk_page(output)
 
 @view.route('/recent/')
