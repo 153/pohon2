@@ -39,6 +39,7 @@ def atom_index():
     page = """<pre>
 
 - <a href='/atom/threads'>/atom/threads</a> \tAll threads
+- <a href='/atom/recent'>/atom/recent</a> \t\tRecent comments
 
 """
     page += tag_index()
@@ -108,3 +109,41 @@ def tag_feed(tag):
     link = url + "/atom/tag/" + tag
     return threads(index, link)
 
+@atom.route("/atom/recent")
+def recent_feed():
+    with open("data/log.txt") as log:
+        log = log.read().splitlines()[::-1]
+    log = [l.split("<>") for l in log][:30]
+    
+    published = unix2atom(log[0][2])
+    entries = []
+    for l in log:
+        # title url published updated content
+        # "New post" /post/l[1]/l[3] l[2] l[2] l[4]
+        title = "New reply"
+        if len(l[5]):
+            title = l[5]
+        link = f"{settings.url}thread/{l[1]}/#{l[3]}"
+        published = unix2atom(l[2])
+        content = l[4].replace("<", "&lt;").replace(">", "&gt;")
+        entry = entry_temp.format(title=title, url=link,
+                                  published=published,
+                                  updated=published,
+                                  content=content)
+        entries.append(entry)
+    entries = "\n".join(entries)
+    title = settings.title + ": recent posts"
+    url = settings.url + "recent"
+    link = settings.url + "atom/recent"
+    output = feed_temp.format(title=title, url=url, link=link,
+                              published=published)
+    output += entries
+    output += "\n\n</feed>"
+
+    return output
+    
+        
+        
+
+if __name__ == "__main__":
+    recent_feed()
