@@ -35,7 +35,6 @@ def addlog(ip, ig=0):
     if ip not in log or ig:
         entry = genkey(ip)
         log[ip] = entry
-        print(log)
         fi = "\n".join([" ".join(log[x]) for x in log])
         with open("data/ips.txt", "w") as iplog:
             iplog.write(fi)
@@ -50,7 +49,6 @@ def approve(ip=0, key=""):
         bans = bans.read().splitlines()
     bans = [b.split(" ")[0] if " " else b for b in bans]
     for b in bans:
-        print(b, ip)
         if len(b.strip()) < 3:
             continue
         if ip.startswith(b):
@@ -134,7 +132,6 @@ def flood(mode="comment"):
     msg = diff
     if diff > 60:
         msg = f"{diff//60} minutes, {diff %60}"
-    print(diff)
     if diff > 0:
         print("flood")
         print(msg)
@@ -160,7 +157,5 @@ def get_comment_log():
     try: log = [x.split() for x in log]
     except: return False
     log = [[*L[:4], *L[4].split("<>")] for L in log]
-    for L in log:
-        print(L)
     
     return log

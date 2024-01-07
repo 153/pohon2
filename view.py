@@ -137,7 +137,6 @@ def tag_index(tags):
         output.append(outstring.format(r[0], r[3], r[2]))
     output = "<ul>\n" + "\n".join(output) + "\n</ul>"
     output = f"<h3>{tags} ({len(results)} threads)</h3>" + output
-    print(output)
     
     return mk_page(output)
 
@@ -300,7 +299,6 @@ def reply_thread():
     if "subject" not in data:
         data["subject"] = ""
     if "sage" in data:
-        print(data["sage"])
         sage = True
     if wl.flood("comment"):
         return mk_page(wl.flood("comment"))
