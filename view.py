@@ -84,7 +84,16 @@ def thread_head(thread):
 
 @view.route('/')
 def homepage():
-    return mk_page(ld_page("index"))
+    with open("data/index.txt") as index:
+        index = index.read().splitlines()
+    index = [i.split("<>") for i in index]
+    pcount = 0
+    tcount = str(len(index))
+    for p in index:
+        pcount += int(p[2])
+    pcount = str(pcount)
+    return mk_page(ld_page("index").format(thread=tcount,
+                                           post=pcount))
 
 @view.route('/about/')
 def about():
