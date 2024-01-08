@@ -92,13 +92,13 @@ def thread_edit(thread):
              "stickylock": "4"}
 
     
-    if not "mod" in data:
+    if not "del" in data:
         pass
-    elif data["mod"] == "delete":
+    elif data["del"] == "delete":
         delete_thread(data["thread"])
         return mk_page("Thread successfully deleted. "
                        "<p><a href='/admin/threads/'>Return</a>")
-    elif data["mod"] == "deleteban":
+    elif data["del"] == "deleteban":
         ban_users(thread, [1])
         delete_thread(data["thread"])
         return mk_page("Thread successfully deleted and OP banned. "
