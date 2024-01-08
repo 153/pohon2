@@ -86,17 +86,30 @@ def thread_edit(thread):
     data = request.form.copy()
     if request.method == "GET":
         return thread_edit_page(thread)
+
+    # modes: 0 = open, 1 = sticky, 2 = sage, 3 = lock, 4 = stickylock
+    modes = {"open": "0", "sticky": "1", "sage": "2", "lock": "3",
+             "stickylock": "4"}
+
     
-    if "mod" in data and data["mod"] == "delete":
+    if not "mod" in data:
+        pass
+    elif data["mod"] == "delete":
         delete_thread(data["thread"])
         return mk_page("Thread successfully deleted. "
                        "<p><a href='/admin/threads/'>Return</a>")
-    elif "mod" in data and data["mod"] == "deleteban":
+    elif data["mod"] == "deleteban":
         ban_users(thread, [1])
         delete_thread(data["thread"])
         return mk_page("Thread successfully deleted and OP banned. "
                        "<p><a href='/admin/threads/'>Return</a>")
+    
     updates = [""]
+    try:
+        if data["mod"] in modes:
+            updates.append(thread_mode(thread, modes[data["mod"]]))
+    except:
+        pass
     tags = request.form.getlist("tag")
     deletes = request.form.getlist("d")
     bans = request.form.getlist("b")
@@ -112,9 +125,16 @@ def thread_edit(thread):
     return mk_page(updates)
 
 def thread_edit_page(thread):
+    modes2 = {"0": "open", "1": "sticky", "2": "sage", "3": "lock",
+              "4": "stickylock"}    
     with open(f"data/{thread}.txt", "r") as data:
         data = data.read().splitlines()
     meta = data[0].split("<>")
+    if len(meta) == 3:
+        tmode = meta[2]
+    else:
+        tmode = "0"
+    tmode = "\"" + modes2[tmode] + "\""
     comments = [d.split("<>") for d in data[1:]]
     meta.append(len(comments))
 
@@ -151,6 +171,8 @@ def thread_edit_page(thread):
     output = ld_page("edit_thread")\
         .format(thread=thread, subject=meta[1], replies=meta[2],
                 tags=tags)
+    print(tmode)
+    output = output.replace(tmode, tmode + " selected")
     output += table
     return mk_page(output)
 
@@ -280,3 +302,44 @@ def ban_users(thread, to_bans):
         bandata.write(brecord)
     return f"{len(bans)} users banned."
 
+def thread_mode(thread, mode):
+    modes = {"0": "open", "1": "sticky", "2": "sage", "3": "lock", "4": "stickylock"}
+    oldmode = "0"
+    
+    with open("data/index.txt") as index:
+        index = index.read().splitlines()
+    with open(f"data/{thread}.txt") as tfile:
+        tfile = tfile.read().splitlines()
+    
+    index = [i.split("<>") for i in index]
+    tfile = [i.split("<>") for i in tfile]
+    tline = tfile[0]
+    for n, i in enumerate(index):
+        if i[0] != thread:
+            continue
+        if len(i) == 4:
+            index[n].append(mode)
+        else:
+            oldmode = i[4]
+            index[n][4] = mode
+    
+    if len(tline) == 2:
+        tline.append(mode)
+    else:
+        tline[2] = mode
+        
+    tfile[0] = tline
+    index = "\n".join(["<>".join(i) for i in index]) + "\n"
+    tfile = "\n".join(["<>".join(i) for i in tfile]) + "\n"
+
+    if oldmode != mode:
+        with open("data/index.txt", "w") as ifile:
+            ifile.write(index)
+        with open(f"data/{thread}.txt", "w") as nthread:
+            nthread.write(tfile)        
+        return "Thread mode changed to " + modes[mode]
+    return "Thread mode left unchanged, as " + modes[mode]
+    
+
+if __name__ == "__main__":
+    thread_mode("1704273444", 1)

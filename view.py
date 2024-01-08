@@ -246,7 +246,7 @@ def view_reply(thread, reply="1"):
                            author=comment[5],
                            comment=comment[3]))
 
-    page = f"<h2>&#9939; <a href='/thread/{thread}'>{thread_subject}</a></h3>"
+    page = f"<h2><a href='/thread/{thread}'>{thread_subject}</a></h3>"
     page += f"Go back: <a href='/thread/{thread}#{anc}'>thread mode</a> | <a href='/tree/{thread}#{anc}'>tree mode</a><p>" 
     page += replys[0] + "<p>"
     if wl.approve():
