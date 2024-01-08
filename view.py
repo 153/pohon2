@@ -255,7 +255,9 @@ def view_reply(thread, reply="1"):
     comments = [c.split("<>") for c in comments]
     template = ld_page("comment")
     thread_subject = comments[0][1]
-    mode = comments[0][2]
+    mode = 0
+    if len(comments[0]) > 2:
+        mode = comments[0][2]
 
     comment = comments[reply]
     if len(comment) > 6:
