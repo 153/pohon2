@@ -152,6 +152,16 @@ def new_reply(thread, comment, parent, author="", subject="", sage=False):
         return False
     now = str(int(time.time()))
 
+    with open(f"data/{thread}.txt") as tmode:
+        tmode = tmode.read().splitlines()
+    tmode = tmode[0].split("<>")
+    if len(tmode) == 2:
+        tmode = "0"
+    elif tmode[2] in ["3", "4"]:
+        return "Thread is closed to posting"
+    elif tmode[2] == "2":
+        sage = True
+    
     ipaddr = wl.get_ip()
     if not author:
         author = s.anon

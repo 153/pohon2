@@ -63,9 +63,17 @@ def tag_list():
 
 def thread_head(thread):
     """Create a thread header, showing replies and tags"""
-    meta = parse.get_meta(thread)
+    modes = {"0": "", "1": "", "2": "(saged)", "3": "(closed)",
+             "4": "(closed)"}
+    with open(f"data/{thread}.txt") as data:
+        data = data.read().splitlines()
+    meta = data[0].split("<>")
     tags = meta[0]
     subject = meta[1]
+    mode = ""
+    if len(meta) > 2:
+        mode = modes[meta[2]]
+             
     if " " in tags:
         tags = tags.split(" ")
         tags = [f" <i><a href='/tags/{t}/'>#{t}</a></i>" for t in tags]
@@ -73,14 +81,15 @@ def thread_head(thread):
     else:
         tags = f" <i><a href='/tags/{tags}'>#{tags}</a></i>"
         
-    replies = meta[2]
+    replies = len(data) - 1
     if replies != 1:
         replies = f"{replies} replies"
     else:
         replies = "1 reply"
     template = ld_page("thread_head")
     return template.format(thread=thread, subject=subject,
-                           replies=replies, tags=tags, cnt=meta[2])
+                           replies=replies, tags=tags,
+                           mode=mode)
 
 @view.route('/')
 def homepage():
@@ -117,6 +126,36 @@ def show_tags():
     page = "\n".join(page)
     return mk_page(page)
 
+def thread_index_sort(index=[]):
+    modes = {"sticky": "<img src='/sticky.png' alt='pinned'>",
+             "lock": "<img src='/lock.png' alt='closed'>",
+             "sage": "<img src='/ghost.png' alt='permasage'>"}
+    if not index:
+        with open("data/index.txt") as index:
+            index = index.read().splitlines()
+        index = [i.split("<>") for i in index]
+        index.sort(key = lambda x: x[1], reverse=True)
+    tmode = []
+    for n, i in enumerate(index):
+        if len(i) >= 5 and i[4] in ["1", "4"]:
+            index.insert(0, index.pop(n))        
+    for n, i in enumerate(index):
+        if len(i) < 5:
+            tmode.append("")
+            continue
+        elif i[4] == "0":
+            tmode.append("")
+            continue
+        if i[4] == "1":
+            tmode.append(modes["sticky"])
+        elif i[4] == "2":
+            tmode.append(modes["sage"])
+        elif i[4] == "3":
+            tmode.append(modes["lock"])
+        elif i[4] == "4":
+            tmode.append(modes["sticky"] + modes["lock"])
+    return tmode, index
+
 @view.route('/tags/<tags>/')
 def tag_index(tags):
     tags = tags.split("+")
@@ -141,10 +180,13 @@ def tag_index(tags):
     tags = " ".join([f"+{tag}" for tag in tags])
     results = [[t, *results[t]] for t in results]
     results.sort(key = lambda x: x[1], reverse=True)
-    outstring = "<li> <a href='/thread/{0}/'>{1}</a> ({2} comments)"
-    for r in results:
-        output.append(outstring.format(r[0], r[3], r[2]))
-    output = "<ul>\n" + "\n".join(output) + "\n</ul>"
+    tmode, index = thread_index_sort(results)
+    outstring = "<a href='/thread/{0}/'>{1}</a> ({2} comments)"
+    for n, r in enumerate(results):
+        newline = tmode[n] + outstring.format(r[0], r[3], r[2])
+        output.append(newline)
+    output = "\n<li>" + "\n<li>".join(output)
+    output = "\n<ul>" + output + "\n</ul>"
     output = f"<h3>{tags} ({len(results)} threads)</h3>" + output
     
     return mk_page(output)
@@ -152,12 +194,10 @@ def tag_index(tags):
 @view.route('/tree/')
 def tree_index():
     """Show a list of threads; clicking threads renders them as trees"""
-    with open("data/index.txt") as index:
-        index = index.read().splitlines()
-    index = [i.split("<>") for i in index]
-    index.sort(key = lambda x: x[1], reverse=True)    
-    index = [f"<a href='/tree/{i[0]}/'>{i[3]}</a> ({i[2]} replies)"
-             for i in index]
+    tmode, index = thread_index_sort()
+
+    for n, i in enumerate(index):
+        index[n] = tmode[n] + f" <a href='/tree/{i[0]}/'>{i[3]}</a> ({i[2]} replies)"
     index = "<li>" + "<li>".join(index)
     page = f"<ul>{index}</ul>"
     return mk_page(page)
@@ -165,12 +205,10 @@ def tree_index():
 @view.route('/thread/')
 def thread_index():
     """Show a list of threads; clicking threads renders them as lists"""
-    with open("data/index.txt") as index:
-        index = index.read().splitlines()
-    index = [i.split("<>") for i in index]
-    index.sort(key = lambda x: x[1], reverse=True)
-    index = [f"<a href='/thread/{i[0]}/'>{i[3]}</a> ({i[2]} replies)"
-             for i in index]
+    tmode, index = thread_index_sort()
+
+    for n, i in enumerate(index):
+        index[n] = tmode[n] + f" <a href='/thread/{i[0]}/'>{i[3]}</a> ({i[2]} replies)"
     index = "\n<li>" + "\n<li>".join(index)
     page = f"<ul>{index}\n</ul>\n"
     return mk_page(page)
@@ -217,6 +255,7 @@ def view_reply(thread, reply="1"):
     comments = [c.split("<>") for c in comments]
     template = ld_page("comment")
     thread_subject = comments[0][1]
+    mode = comments[0][2]
 
     comment = comments[reply]
     if len(comment) > 6:
@@ -249,15 +288,17 @@ def view_reply(thread, reply="1"):
     page = f"<h2><a href='/thread/{thread}'>{thread_subject}</a></h3>"
     page += f"Go back: <a href='/thread/{thread}#{anc}'>thread mode</a> | <a href='/tree/{thread}#{anc}'>tree mode</a><p>" 
     page += replys[0] + "<p>"
-    if wl.approve():
+    if not wl.approve():
+        page += ld_page("reply_captcha").format(wl.show_captcha(1, f"/post/{thread}/{reply}"))
+    elif mode in ["3", "4"]:
+        page += ld_page("closed_box")
+    else:
         page += ld_page("reply_thread").format(
             anon=settings.anon, thread=thread, parent=anc,
             subject = str(settings.length["subject"]),
             name = str(settings.length["name"]),
             comment = str(settings.length["long"])
         )
-    else:
-        page += ld_page("reply_captcha").format(wl.show_captcha(1, f"/post/{thread}/{reply}"))
     page += "<hr>"
     page += "<h3>Parents</h3>"
     page += "<p>".join(replys[1:])

@@ -4,13 +4,17 @@
 <p>
 <b>Moderate thread:</b>
 
-<input type="radio" id="open" name="mod" value="open" checked>
-<label for="open">Open</label>
-<input type="radio" id="lock" name="mod" value="lock">
-<label for="lock">Lock</label>
-<input type="radio" id="delete" name="mod" value="delete">
+<select name="mod" id="mod">
+  <option value="open">Open</option>
+  <option value="sage">Permasage</option>
+  <option value="lock">Lock</option>
+  <option value="sticky">Sticky</option>  
+  <option value="stickylock">Sticky Lock</option>
+</select>
+  
+<input type="checkbox" id="delete" name="mod" value="delete">
 <label for="delete">Delete thread</label>
-<input type="radio" id="deleteban" name="mod" value="deleteban">
+<input type="checkbox" id="deleteban" name="mod" value="deleteban">
 <label for="deleteban">Delete + ban</label>
 
 <input type="submit" value="Moderate!">
