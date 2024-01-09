@@ -6,11 +6,13 @@ import parse
 import whitelist as wl
 
 def clean(msg, limit):
+    """Sanitize input and reduce length of input"""
     msg = msg.replace("&", "&amp;").replace("<", "&lt;")\
                     .replace("\n","<br>").replace("\r","")
     return msg[:limit]
 
 def tripcode(author):
+    """Make a tripcode from input string "user#password"""
     if not "#" in author:
         if "◆" in author:
             author = author.replace("◆", "&#9671;")
@@ -29,6 +31,7 @@ def tripcode(author):
     
 
 def line_check(msg):
+    """Make sure no lines in comments are >72 chars long"""
     if "<br>" in msg:
         msg = msg.split("<br>")
     else:
@@ -52,6 +55,7 @@ def line_check(msg):
     return errorpage.format(s.length['line'], toolong)
                            
 def new_thread(subject="", comment="", author="", tags=None):
+    """Create a new thread, if subject and comment are specified, with optional author/tags"""
     if None in [subject, comment]:
         return False
     if not tags:
@@ -95,8 +99,8 @@ def new_thread(subject="", comment="", author="", tags=None):
     
     return thread
 
-def update_log(ip, thread, time_reply, replynum,
-               comment, subject, author, sage=False):
+def update_log(ip, thread, time_reply, replynum, comment, subject, author, sage=False):
+    """Update the serverlog when a new thread or comment is made"""
     line = "<>".join([ip, thread, time_reply, replynum,
                       comment, subject, author])
     if sage:
@@ -105,7 +109,8 @@ def update_log(ip, thread, time_reply, replynum,
     with open("data/log.txt", "a") as log:
         log.write(line)
 
-def update_index(thread, time_reply, sage=False):    
+def update_index(thread, time_reply, sage=False):
+    """Update index file when a reply is made"""
     with open("data/index.txt") as indexf:
         indexf = indexf.read().splitlines()
     indexf = [i.split("<>") for i in indexf if len(i.strip())]
@@ -117,8 +122,8 @@ def update_index(thread, time_reply, sage=False):
     with open("data/index.txt", "w") as index:
         index.write(indexf)
 
-def update_thread(thread, ipaddr, time_reply, replynum,
-                  comment, subject, author, sage=False):
+def update_thread(thread, ipaddr, time_reply, replynum, comment, subject, author, sage=False):
+    """update a thread file when a reply is made"""
     t_line = "<>".join([ipaddr, time_reply, replynum,
                         comment, subject, author])
     if sage:
@@ -128,6 +133,7 @@ def update_thread(thread, ipaddr, time_reply, replynum,
         t_file.write(t_line)
 
 def update_tags(thread, tags):
+    """update tag list when a new thread is made"""
     with open("data/tags.txt") as taglist:
         taglist = taglist.read().splitlines()
     taglist = [t.split(" ") for t in taglist]
@@ -148,6 +154,7 @@ def mk_replynum(thread, parent="1"):
     return ":".join([parent, replynum])
 
 def new_reply(thread, comment, parent, author="", subject="", sage=False):
+    """Post a new reply to a thread"""
     if wl.flood("comment"):
         return False
     now = str(int(time.time()))

@@ -68,34 +68,43 @@ def thread_head(thread):
     with open(f"data/{thread}.txt") as data:
         data = data.read().splitlines()
     meta = data[0].split("<>")
-    tags = meta[0]
+    
     subject = meta[1]
+    
+    # get the mode... 
     mode = ""
     if len(meta) > 2:
         mode = modes[meta[2]]
-             
+
+    # set the tags
+    tags = meta[0]
     if " " in tags:
         tags = tags.split(" ")
         tags = [f" <i><a href='/tags/{t}/'>#{t}</a></i>" for t in tags]
         tags = "".join(tags)
     else:
         tags = f" <i><a href='/tags/{tags}'>#{tags}</a></i>"
-        
+
+    # count replies
     replies = len(data) - 1
     if replies != 1:
         replies = f"{replies} replies"
     else:
         replies = "1 reply"
     template = ld_page("thread_head")
+    
     return template.format(thread=thread, subject=subject,
                            replies=replies, tags=tags,
                            mode=mode)
 
 @view.route('/')
 def homepage():
+    """Show the homepage and basic post statistics"""
+    
     with open("data/index.txt") as index:
         index = index.read().splitlines()
     index = [i.split("<>") for i in index]
+
     pcount = 0
     tcount = str(len(index))
     for p in index:
@@ -106,11 +115,12 @@ def homepage():
 
 @view.route('/about/')
 def about():
+    """Show an about page"""
     return mk_page(ld_page("about"))
 
 @view.route('/tags/')
 def show_tags():
-    """Format the tag list for users"""
+    """Format a tag list for users"""
     tags = tag_list()
     page = ["<ul>"]
     for t in tags:
@@ -127,9 +137,10 @@ def show_tags():
     return mk_page(page)
 
 def thread_index_sort(index=[]):
-    modes = {"sticky": "<img src='/sticky.png' alt='pinned'>",
-             "lock": "<img src='/lock.png' alt='closed'>",
-             "sage": "<img src='/ghost.png' alt='permasage'>"}
+    """Sort an index of threads, and also show thread's special mode (if any)"""
+    modes = {"sticky": "<img src='/sticky.png' title='pinned'>",
+             "lock": "<img src='/lock.png' title='closed'>",
+             "sage": "<img src='/ghost.png' title='permasage'>"}
     if not index:
         with open("data/index.txt") as index:
             index = index.read().splitlines()
@@ -158,6 +169,7 @@ def thread_index_sort(index=[]):
 
 @view.route('/tags/<tags>/')
 def tag_index(tags):
+    """Show a list of threads with specific tag/tags"""
     tags = tags.split("+")
     
     with open("data/tags.txt") as tagdb:
@@ -225,7 +237,6 @@ def view_tree(thread, view="tree"):
     
     replycnt = len(data) - 2
 
-    # change parse_thread to parse_tree
     tree = parse.parse_tree(thread)
     template = ld_page("tree")
     page = thread_head(thread)
@@ -238,9 +249,7 @@ def post_null():
 
 @view.route('/post/<thread>/<reply>')
 def view_reply(thread, reply="1"):
-    # Show the target post, its parents, its children, and
-    # a new reply box.
-
+    """Show a reply to a thread, a new reply box, and the reply's parents"""
     sage = False
     reply = int(reply)
     try:
@@ -350,6 +359,7 @@ def create_thread():
 
 @view.route('/post', methods = ["POST"])
 def reply_thread():
+    """Post a reply to a thread"""
     sage = False
     data = request.form.copy()
     if None in [data["thread"], data["comment"]]:
@@ -374,10 +384,11 @@ def reply_thread():
 
 @view.route('/recent/')
 def recent_posts():
+    """View x recent posts"""
     with open("data/log.txt") as posts:
         posts = posts.read().splitlines()[::-1]
     posts = [p.split("<>") for p in posts]
-    output = ["<h3>Last 30 posts</h3>"]
+    output = [f"<h3>Last {settings.length['recent']} posts</h3>"]
     ctemp = ld_page("comment")
     for p in posts:
         if len(p) > 7:
@@ -399,6 +410,7 @@ def recent_posts():
                             pubdate=pubdate, author=p[6],
                             comment=p[4])
         output.append(post)
+    output = output[:settings.length["recent"]+1]
     
     return mk_page("\n".join(output))
         

@@ -113,7 +113,7 @@ def tag_feed(tag):
 def recent_feed():
     with open("data/log.txt") as log:
         log = log.read().splitlines()[::-1]
-    log = [l.split("<>") for l in log][:30]
+    log = [l.split("<>") for l in log][:settings.length["recent"]]
     
     published = unix2atom(log[0][2])
     entries = []
@@ -124,11 +124,11 @@ def recent_feed():
         if len(l[5]):
             title = l[5]
         link = f"{settings.url}thread/{l[1]}/#{l[3]}"
-        published = unix2atom(l[2])
+        updated = unix2atom(l[2])
         content = l[4].replace("<", "&lt;").replace(">", "&gt;")
         entry = entry_temp.format(title=title, url=link,
-                                  published=published,
-                                  updated=published,
+                                  published=updated,
+                                  updated=updated,
                                   content=content)
         entries.append(entry)
     entries = "\n".join(entries)

@@ -8,11 +8,13 @@ import settings
 admin = Blueprint("admin", __name__)
 
 def timestamp(x):
+    """Translate a UNIX timestamp to our datetime format"""
     x = datetime.datetime.fromtimestamp(int(x))
     x = x.strftime("%Y-%m-%d [%a] %H:%M")
     return x
 
 def check_login():
+    """Verify an admin by checking cookie, or return to login screen"""
     checkpass = request.cookies.get("admin")
     print(checkpass)
     if checkpass != settings.password:
@@ -21,12 +23,14 @@ def check_login():
 
 @admin.route('/logout/')
 def logout():
+    """Clear admin cookie"""
     response = make_response(redirect('/admin/'))
     response.set_cookie("admin", "null")
     return response
 
 @admin.route('/admin/', methods=["POST", "GET"])
 def login():
+    """Present a login page, or verify a password"""
     checkpass = request.cookies.get("admin")
     if request.method == "GET":
         if checkpass != settings.password:
@@ -42,12 +46,14 @@ def login():
 
 @admin.route('/admin/menu/')
 def menu():
+    """Show an index of admin-related functions"""
     if check_login():
         return check_login()
     return mk_page(ld_page("admin_menu"))
 
 @admin.route('/admin/threads/')
 def threads():
+    """See a list of threads, for moderation purposes"""
     if check_login():
         return check_login()
     with open("data/index.txt") as index:
@@ -64,6 +70,7 @@ def threads():
 
 @admin.route('/admin/bans/', methods=["POST", "GET"])
 def manage_bans():
+    """Modify the ban list"""
     if check_login():
         return check_login()
     if request.method == "GET":
@@ -83,6 +90,7 @@ def manage_bans():
 
 @admin.route('/admin/threads/<thread>/', methods=["POST", "GET"])
 def thread_edit(thread):
+    """Do admin-related tasks with a thread"""
     data = request.form.copy()
     if request.method == "GET":
         return thread_edit_page(thread)
@@ -125,6 +133,7 @@ def thread_edit(thread):
     return mk_page(updates)
 
 def thread_edit_page(thread):
+    """Show helpful things to do with moderating a thread"""
     modes2 = {"0": "open", "1": "sticky", "2": "sage", "3": "lock",
               "4": "stickylock"}    
     with open(f"data/{thread}.txt", "r") as data:
@@ -177,6 +186,7 @@ def thread_edit_page(thread):
     return mk_page(output)
 
 def delete_log_line(thread, post, isthread=False):
+    """When deleting a post or thread, clear it from the log"""
     with open("data/log.txt", "r") as log:
         log = log.read().splitlines()
     log = [l.split("<>") for l in log]
@@ -214,6 +224,7 @@ def delete_thread(thread):
 
     # remove from log
     delete_log_line(thread, thread, True)
+    
 def edit_tags(thread, ntags):
     if len(ntags) == 0:
         ntags = ["random"]
@@ -339,7 +350,4 @@ def thread_mode(thread, mode):
             nthread.write(tfile)        
         return "Thread mode changed to " + modes[mode]
     return "Thread mode left unchanged, as " + modes[mode]
-    
 
-if __name__ == "__main__":
-    thread_mode("1704273444", 1)
