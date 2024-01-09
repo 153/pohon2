@@ -18,7 +18,8 @@ limit = {"thread": 60*60, # 1 hour
          "comment": 60} # 1 minute
 
 length = { "name": 20,
-           "subject": 40,
-           "long": 3000,
-           "line": 75
+           "subject": 60,
+           "long": 9001,
+           "line": 75,
+           "recent": 25
           }
