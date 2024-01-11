@@ -173,11 +173,38 @@ def thread_index_sort(index=[]):
     return tmode, index
 
 @view.route('/tags/<tags>/')
-def tag_index(tags):
+@view.route('/tags/<tags>/<badtags>/')
+def tag_index(tags, badtags=None):
     """Show a list of threads with specific tag/tags"""
-    tags = tags.split("+")
     atoms = " <link rel='alternate' type='application/atom+xml'"
     atoms += f" href='/atom/tag/{tags[0]}'>"
+    title = ""
+    if badtags:
+        if "+" in badtags:
+            badtags = badtags.split("+")
+        elif " " in badtags:
+            badtags = badtags.split(" ")
+        else:
+            badtags = [badtags]
+    else:
+        badtags = []
+        
+    if not tags or tags == " ":
+        tags = settings.tags
+        title ="<h3>All tags"
+    elif "+" in tags:
+        tags = tags.split("+")
+    elif " " in tags:
+        tags = tags.split(" ")
+    else:
+        tags = [tags]
+        
+    if not len(tags) and not len(badtags):
+        return show_tags()
+    
+    negate = ""
+    if badtags:
+        negate = "-" + " -".join(badtags)
     
     with open("data/tags.txt") as tagdb:
         tagdb = tagdb.read().splitlines()
@@ -192,11 +219,24 @@ def tag_index(tags):
     results = {}
 
     output = []
+
+    if badtags:
+        badtags = [tagdb[i] for i in badtags]
+        badtags = list(set([c for b in badtags for c in b]))
+
+    poscnt = []
+    negcnt = []
     for t in tags:
         if t in tagdb:
             for t2 in tagdb[t]:
+                poscnt.append(t2)
+                if t2 in badtags:
+                    negcnt.append(t2)
+                    continue
                 results[t2] = [*threaddb[t2]]
-
+                
+    poscnt = len(set(poscnt))
+    negcnt = len(set(negcnt))
     tags = " ".join([f"+{tag}" for tag in tags])
     results = [[t, *results[t]] for t in results]
     results.sort(key = lambda x: x[1], reverse=True)
@@ -207,7 +247,13 @@ def tag_index(tags):
         output.append(newline)
     output = "\n<li>" + "\n<li>".join(output)
     output = atoms + "\n<ul>" + output + "\n</ul>"
-    output = f"<h3>{tags} ({len(results)} threads)</h3>" + output
+    if len(title) == 0:
+        title = f"<h3>{tags} ({poscnt} threads)</h3>"
+    else:
+        title += f" ({poscnt} threads)</h3>"
+    if badtags:
+        title += f"<h3>{negate} ({len(badtags)} threads)</h3>"
+    output = title + output + "<p>"
     
     return mk_page(output)
 
