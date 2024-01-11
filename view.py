@@ -176,6 +176,8 @@ def thread_index_sort(index=[]):
 def tag_index(tags):
     """Show a list of threads with specific tag/tags"""
     tags = tags.split("+")
+    atoms = " <link rel='alternate' type='application/atom+xml'"
+    atoms += f" href='/atom/tag/{tags[0]}'>"
     
     with open("data/tags.txt") as tagdb:
         tagdb = tagdb.read().splitlines()
@@ -188,7 +190,8 @@ def tag_index(tags):
     threaddb = {t[0]: t[1:] for t in threaddb}
     
     results = {}
-    output = []
+
+    output = [atoms]
     for t in tags:
         if t in tagdb:
             for t2 in tagdb[t]:
@@ -211,23 +214,27 @@ def tag_index(tags):
 @view.route('/tree/')
 def tree_index():
     """Show a list of threads; clicking threads renders them as trees"""
+    atoms = " <link rel='alternate' type='application/atom+xml'"
+    atoms += f" href='/atom/threads'>\n"
     tmode, index = thread_index_sort()
 
     for n, i in enumerate(index):
         index[n] = tmode[n] + f" <a href='/tree/{i[0]}/'>{i[3]}</a> ({i[2]} replies)"
     index = "<li>" + "<li>".join(index)
-    page = f"<ul>{index}</ul>"
+    page = atoms + f"<ul>{index}</ul>"
     return mk_page(page)
 
 @view.route('/thread/')
 def thread_index():
     """Show a list of threads; clicking threads renders them as lists"""
+    atoms = " <link rel='alternate' type='application/atom+xml'"
+    atoms += f" href='/atom/threads'>\n"
     tmode, index = thread_index_sort()
 
     for n, i in enumerate(index):
         index[n] = tmode[n] + f" <a href='/thread/{i[0]}/'>{i[3]}</a> ({i[2]} replies)"
     index = "\n<li>" + "\n<li>".join(index)
-    page = f"<ul>{index}\n</ul>\n"
+    page = atoms + f"<ul>{index}\n</ul>\n"
     return mk_page(page)
 
 @view.route('/tree/<thread>/')
@@ -393,10 +400,13 @@ def reply_thread():
 @view.route('/recent/')
 def recent_posts():
     """View x recent posts"""
+    atoms = " <link rel='alternate' type='application/atom+xml'"
+    atoms += f" href='/atom/recent'>\n"
     with open("data/log.txt") as posts:
         posts = posts.read().splitlines()[::-1]
     posts = [p.split("<>") for p in posts]
-    output = [f"<h3>Last {settings.length['recent']} posts</h3>"]
+    output = [atoms]
+    output.append(f"<h3>Last {settings.length['recent']} posts</h3>")
     ctemp = ld_page("comment")
     for p in posts:
         if len(p) > 7:

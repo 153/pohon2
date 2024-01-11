@@ -37,9 +37,19 @@ def unix2atom(unix):
 @atom.route("/atom/")
 def atom_index():
     page = """<pre>
+To be enjoyed in your favorite feed reader.
+
+Pages such as /recent/ , /thread/ , /tree/ , etc contain
+special markup to link with their associated Atom feed, so 
+you can just copy the link for the page you want to follow 
+in most feed readers, and they should be able to figure out 
+what you want to subscribe to.
 
 - <a href='/atom/threads'>/atom/threads</a> \tAll threads
 - <a href='/atom/recent'>/atom/recent</a> \t\tRecent comments
+
+- /atom/thread/THREAD \tView a thread as feed, where THREAD
+\t\t\tis some number
 
 """
     page += tag_index()
