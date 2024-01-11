@@ -249,6 +249,8 @@ def tag_index(tags, badtags=None):
     for n, r in enumerate(results):
         newline = tmode[n] + outstring.format(r[0], r[3], r[2])
         output.append(newline)
+    if len(output) == 0:
+        output = ["Zero entries for tag query"]
     output = "\n<li>" + "\n<li>".join(output)
     output = atoms + "\n<ul>" + output + "\n</ul>"
     if len(title) == 0:
@@ -256,7 +258,7 @@ def tag_index(tags, badtags=None):
     else:
         title += f" ({poscnt} threads)</h3>"
     if badtags:
-        title += f"<h3>{negate} ({len(badtags)} threads)</h3>"
+        title += f"<h3>{negate} ({negcnt} threads)</h3>"
     output = title + output + "<p>"
     
     return mk_page(output)
