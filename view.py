@@ -118,6 +118,11 @@ def about():
     """Show an about page"""
     return mk_page(ld_page("about"))
 
+@view.route('/rules/')
+def rules():
+    """Show a rules page"""
+    return mk_page(ld_page("rules"))
+
 @view.route('/tags/')
 def show_tags():
     """Format a tag list for users"""
