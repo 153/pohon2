@@ -191,7 +191,7 @@ def tag_index(tags):
     
     results = {}
 
-    output = [atoms]
+    output = []
     for t in tags:
         if t in tagdb:
             for t2 in tagdb[t]:
@@ -206,7 +206,7 @@ def tag_index(tags):
         newline = tmode[n] + outstring.format(r[0], r[3], r[2])
         output.append(newline)
     output = "\n<li>" + "\n<li>".join(output)
-    output = "\n<ul>" + output + "\n</ul>"
+    output = atoms + "\n<ul>" + output + "\n</ul>"
     output = f"<h3>{tags} ({len(results)} threads)</h3>" + output
     
     return mk_page(output)
