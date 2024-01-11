@@ -240,6 +240,7 @@ def tag_index(tags, badtags=None):
                 
     poscnt = len(set(poscnt))
     negcnt = len(set(negcnt))
+    if negcnt > poscnt: negcnt = poscnt
     tags = " ".join([f"+{tag}" for tag in tags])
     results = [[t, *results[t]] for t in results]
     results.sort(key = lambda x: x[1], reverse=True)
