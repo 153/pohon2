@@ -220,9 +220,12 @@ def tag_index(tags, badtags=None):
 
     output = []
 
-    if badtags:
-        badtags = [tagdb[i] for i in badtags]
-        badtags = list(set([c for b in badtags for c in b]))
+    try:
+        if badtags:
+            badtags = [tagdb[i] for i in badtags]
+            badtags = list(set([c for b in badtags for c in b]))
+    except:
+        badtags = []
 
     poscnt = []
     negcnt = []
