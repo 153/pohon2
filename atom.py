@@ -164,12 +164,12 @@ def thread_feed(thread):
 
     entries = []
     for n, i in enumerate(tfile):
-        title = i[4]
+        ttitle = i[4]
         if not len(title): title = "Reply to thread"
         plink = f"{settings.url}post/{thread}/{str(n + 1)}"
         posted = unix2atom(i[1])
         content = i[3].replace(">", "&gt;").replace("<", "&lt;")
-        entry = entry_temp.format(title=title, url=plink,
+        entry = entry_temp.format(title=ttitle, url=plink,
                                   published=posted,
                                   updated=posted,
                                   content=content)
