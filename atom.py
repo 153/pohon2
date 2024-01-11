@@ -141,9 +141,37 @@ def recent_feed():
     output += "\n\n</feed>"
 
     return output
-    
-        
-        
+
+@atom.route("/atom/thread/<thread>/")
+def thread_feed(thread):
+    with open(f"data/{thread}.txt") as tfile:
+        tfile = tfile.read().splitlines()
+    tfile = [t.split("<>") for t in tfile]
+    meta, tfile = tfile[0], tfile[1:]
+    updated = unix2atom(tfile[-1][1])
+    title = meta[1]
+    link = settings.url + "atom/thread/" + thread
+
+    entries = []
+    for n, i in enumerate(tfile):
+        title = i[4]
+        if not len(title): title = "Reply to thread"
+        plink = f"{settings.url}post/{thread}/{str(n + 1)}"
+        posted = unix2atom(i[1])
+        content = i[3].replace(">", "&gt;").replace("<", "&lt;")
+        entry = entry_temp.format(title=title, url=plink,
+                                  published=posted,
+                                  updated=posted,
+                                  content=content)
+        entries.append(entry)
+    entries = "\n".join(entries)
+    output = feed_temp.format(title=title,
+                              url=link, link=link,
+                              published=updated,
+                              updated=updated)
+    output += entries
+    output += "\n\n</feed>"
+    return output
 
 if __name__ == "__main__":
     recent_feed()
