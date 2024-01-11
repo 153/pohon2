@@ -165,7 +165,7 @@ def thread_feed(thread):
     entries = []
     for n, i in enumerate(tfile):
         ttitle = i[4]
-        if not len(ttitle): title = "Reply to thread"
+        if not len(ttitle): ttitle = "Reply to thread"
         plink = f"{settings.url}post/{thread}/{str(n + 1)}"
         posted = unix2atom(i[1])
         content = i[3].replace(">", "&gt;").replace("<", "&lt;")
