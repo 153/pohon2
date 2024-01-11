@@ -226,7 +226,8 @@ def thread_index():
     return mk_page(page)
 
 @view.route('/tree/<thread>/')
-def view_tree(thread, view="tree"):
+@view.route('/tree/<thread>/<parent>')
+def view_tree(thread, view="tree", parent=""):
     """View a thread in tree mode"""
     page = ld_page("tree")
     try:
@@ -237,7 +238,7 @@ def view_tree(thread, view="tree"):
     
     replycnt = len(data) - 2
 
-    tree = parse.parse_tree(thread)
+    tree = parse.parse_tree(thread, parent)
     template = ld_page("tree")
     page = thread_head(thread)
     page += template.format(tree=tree, )
@@ -297,7 +298,9 @@ def view_reply(thread, reply="1"):
                            comment=comment[3]))
 
     page = f"<h2><a href='/thread/{thread}'>{thread_subject}</a></h3>"
-    page += f"Go back: <a href='/thread/{thread}#{anc}'>thread mode</a> | <a href='/tree/{thread}#{anc}'>tree mode</a><p>" 
+    page += f"Go back: <a href='/thread/{thread}#{anc}'>thread mode</a> "
+    page += f"| <a href='/tree/{thread}#{anc}'>tree mode</a> "
+    page += f"| <a href='/tree/{thread}/{str(reply)}'>sub tree</a><p>" 
     page += replys[0] + "<p>"
     if not wl.approve():
         page += ld_page("reply_captcha").format(wl.show_captcha(1, f"/post/{thread}/{reply}"))

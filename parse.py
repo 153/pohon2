@@ -8,7 +8,7 @@ def get_meta(number):
     meta = [*meta[0].split("<>"), len(meta) -1]
     return meta
 
-def parse_tree(thread):
+def parse_tree(thread,parent=""):
     with open(f"./data/{thread}.txt", "r") as topic:
         topic = topic.read().splitlines()
     meta = topic[0].split("<>")
@@ -18,10 +18,18 @@ def parse_tree(thread):
         t[1] = datetime.datetime.fromtimestamp(int(t[1]))
         t[1] = t[1].strftime("%Y-%m-%d %H:%M")
         repnum = t[2]
+        repchain = [t[2]]
         if ":" in repnum:
+            repchain = repnum.split(":")
             repnum = repnum.split(":")[-1]
         mkanchor = f"<a id='{t[2]}' href='/post/{thread}/{repnum}' title='{t[1]}'>&#128337; {repnum}.</a>"
-        skeleton[t[2]] = [mkanchor, t[4], t[3]]
+        if parent and parent in repchain:
+            pos = repchain.index(parent)
+            repchain = ":".join(repchain[pos:])
+            t[2] = repchain
+            skeleton[t[2]] = [mkanchor, t[4], t[3]]
+        if not parent:
+            skeleton[t[2]] = [mkanchor, t[4], t[3]]
     return tree.fmt_tree(skeleton)
 
 def parse_thread(thread):
