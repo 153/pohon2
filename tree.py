@@ -59,7 +59,7 @@ def parse(tree):
         else:
             parent = ""
         tree_dic[t] = [lev, *children, len(children), parent]
-        lines = mklvl(tree_dic)
+    lines = mklvl(tree_dic)
     return [tree, *lines]
 
 # head: tree[1], date, name
