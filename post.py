@@ -18,6 +18,8 @@ def tripcode(author):
             author = author.replace("◆", "&#9671;")
         return author
     author = author.split("#")
+    if len(author) > 2:
+        author[1] = "#".join(author[1:])
     if "◆" in author[0]:
         author[0] = author[0].replace("◆", "&#9671;")
     if "&#9671;" in author[1]:
