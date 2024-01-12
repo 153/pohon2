@@ -20,16 +20,43 @@ def tripcode(author):
     author = author.split("#")
     if len(author) > 2:
         author[1] = "#".join(author[1:])
-    if "◆" in author[0]:
-        author[0] = author[0].replace("◆", "&#9671;")
     if "&#9671;" in author[1]:
         author[1].replace("&#9671", "◆")
+        
     pw = author[1][:8]
-    salt = (pw + "H.")[1:3]
-    trip = crypt.crypt(pw, salt)[-10:]
+
+    trip = trip2(pw)
     trip = f"<span class='trip' title='tripcode'>{trip}</span>"
     author = "&#9670;".join([author[0], trip])
     return author
+
+def trip2(tripkey):
+    from passlib.hash import des_crypt
+    from re import sub
+
+    try:
+        tripkey = bytes(tripkey, encoding='shift-jis', errors='strict')
+        tripkey.decode('utf-8')
+    except (UnicodeDecodeError,):
+        pass
+    except (UnicodeEncodeError,):
+        try:
+            tripkey = bytes(tripkey, encoding='utf-8', errors='strict')
+        except (UnicodeEncodeError,):
+            tripkey = bytes(tripkey, encoding='utf-8', errors='xmlcharrefreplace')
+    else:
+        pass
+
+    salt = (tripkey + b'H.')[1:3]
+    salt = sub(rb'[^\.-z]', b'.', salt)
+    salt = salt.translate(bytes.maketrans(b':;<=>?@[\\]^_`', b'ABCDEFGabcdef'))
+
+    # trip = des_crypt.hash(tripkey, salt=salt.decode('shift-jis'))
+    trip = des_crypt.hash(tripkey, salt=salt.decode('utf-8'))
+    trip = trip[-10:]
+
+    return trip
+    
     
 
 def line_check(msg):
