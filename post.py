@@ -13,9 +13,9 @@ def clean(msg, limit):
 
 def tripcode(author):
     """Make a tripcode from input string "user#password"""
+    if "◆" in author:
+        author = author.replace("◆", "&#9671;")
     if not "#" in author:
-        if "◆" in author:
-            author = author.replace("◆", "&#9671;")
         return author
     author = author.split("#")
     if len(author) > 2:
