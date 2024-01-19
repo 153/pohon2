@@ -94,7 +94,6 @@ def fmtpost(comment):
                 result.append("</span>")
             line = "".join(result)
         test = line.strip()
-        print(test)
         if test.startswith("&gt;") or test.startswith(">"):
             output.append("<span class='quote'>" + line + "</span>")
         elif test.startswith("&lt;"):
