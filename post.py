@@ -8,6 +8,7 @@ import whitelist as wl
 def clean(msg, limit):
     """Sanitize input and reduce length of input"""
     msg = msg.replace("&", "&amp;").replace("<", "&lt;")\
+                    .replace(">", "&gt;")\
                     .replace("\n","<br>").replace("\r","")
     return msg[:limit]
 

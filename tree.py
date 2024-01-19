@@ -1,4 +1,5 @@
 import copy
+import parse as p
 
 chars = {
     "diamond": "&#9670;",
@@ -95,7 +96,9 @@ def mktree(tree):
     return tree
 
 def branch(node, comment, test=1):
-    # comment: date, subject, comment          
+    # comment: date, subject, comment
+    print(comment[2])
+    comment[2] = p.fmtpost(comment[2])
     head = chars["space"].join(node[1])
     if len(node[1]) > 0:
         head += chars['dash']

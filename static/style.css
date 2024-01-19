@@ -81,3 +81,24 @@ summary {
     font-style: normal;
     border-bottom: 1px dashed;
 }
+
+.quote {
+    color: #0F0;
+}
+
+.quote2 {
+    color: #FD0;
+}
+
+.quote3 {
+    color: #F6F;
+}
+
+.spoiler {
+    color: black;
+    background-color: black;
+}
+
+.spoiler:hover {
+    color: white;
+}

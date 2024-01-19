@@ -97,6 +97,31 @@ def thread_head(thread):
                            replies=replies, tags=tags,
                            mode=mode)
 
+def fmtpost(comment):
+    comment = comment.split("<br>")
+    output = []
+    for line in comment:
+        test = line
+        if "%" in line and not (test.count("%") % 2):
+            test = test.split("%")
+            result = []
+            for n, t in enumerate(test):
+                result.append(t)
+                if not (n % 2):
+                    result.append("<span class='spoiler'>")
+                else:
+                    result.append("</span>")
+            line = "".join(result)
+        test = line.strip()
+        if test.startswith("&gt;"):
+            output.append("<span class='quote'>" + line + "</span>")
+        elif test.startswith("&lt;"):
+            output.append("<span class='quote2'>" + line + "</span>")
+        else:
+            output.append(line)
+    comment = "<br>".join(output)
+    return comment
+
 @view.route('/')
 def homepage():
     """Show the homepage and basic post statistics"""
@@ -354,6 +379,7 @@ def view_reply(thread, reply="1"):
             comment[5] = settings.anon
         if sage:
             comment[5] = f"<span class='sage'>{comment[5]}</span>"
+        comment[3] = parse.fmtpost(comment[3])
 
         replys.append(template.format(subject=comment[4],
                            postnum=postnum,

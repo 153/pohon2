@@ -63,6 +63,7 @@ def parse_thread(thread):
         postnum = f"<a href='/post/{thread}/{postnum}' id='{comment[2]}'>#{postnum}.</a>"
         if n == ccount:
             postnum += "<a id='bottom'></a>"
+        comment[3] = fmtpost(comment[3])
         comment = template.format(subject=comment[4],
                                   postnum=postnum,
                                   pubdate=pubdate,
@@ -71,5 +72,36 @@ def parse_thread(thread):
         output.append(comment)
     output = "<p>".join(output)
     return output
-        
-                                  
+
+def fmtpost(comment):
+    comment = comment.split("<br>")
+    output = []
+    for line in comment:
+        test = line
+        if "%" in line and not (test.count("%") % 2):
+            test = test.split("%")
+            result = []
+            tagopen = 0
+            for n, t in enumerate(test):
+                result.append(t)
+                if not (n % 2):
+                    tagopen = 1
+                    result.append("<span class='spoiler'>")
+                else:
+                    tagopen = 0
+                    result.append("</span>")
+            if tagopen:
+                result.append("</span>")
+            line = "".join(result)
+        test = line.strip()
+        print(test)
+        if test.startswith("&gt;"):
+            output.append("<span class='quote'>" + line + "</span>")
+        elif test.startswith("&lt;"):
+            output.append("<span class='quote2'>" + line + "</span>")
+        elif test.startswith("^"):
+            output.append("<span class='quote3'>" + line + "</span>")
+        else:
+            output.append(line)
+    comment = "<br>".join(output)
+    return comment
