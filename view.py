@@ -97,30 +97,6 @@ def thread_head(thread):
                            replies=replies, tags=tags,
                            mode=mode)
 
-def fmtpost(comment):
-    comment = comment.split("<br>")
-    output = []
-    for line in comment:
-        test = line
-        if "%" in line and not (test.count("%") % 2):
-            test = test.split("%")
-            result = []
-            for n, t in enumerate(test):
-                result.append(t)
-                if not (n % 2):
-                    result.append("<span class='spoiler'>")
-                else:
-                    result.append("</span>")
-            line = "".join(result)
-        test = line.strip()
-        if test.startswith("&gt;"):
-            output.append("<span class='quote'>" + line + "</span>")
-        elif test.startswith("&lt;"):
-            output.append("<span class='quote2'>" + line + "</span>")
-        else:
-            output.append(line)
-    comment = "<br>".join(output)
-    return comment
 
 @view.route('/')
 def homepage():
@@ -502,6 +478,7 @@ def recent_posts():
                 p[4] = parent + p[4]
             replynum = replynum[-1]
         postnum = f"<a href='/thread/{p[1]}#{p[3]}'>{replynum}.</a>"
+        p[4] = parse.fmtpost(p[4])
         post = ctemp.format(postnum=postnum, subject=p[5],
                             pubdate=pubdate, author=p[6],
                             comment=p[4])
