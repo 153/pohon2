@@ -58,8 +58,6 @@ def trip2(tripkey):
 
     return trip
     
-    
-
 def line_check(msg):
     """Make sure no lines in comments are >72 chars long"""
     if "<br>" in msg:
@@ -84,7 +82,7 @@ def line_check(msg):
     toolong = "\n".join([longline.format(*m) for m in toolong])
     return errorpage.format(s.length['line'], toolong)
                            
-def new_thread(subject="", comment="", author="", tags=None):
+def new_thread(subject="", comment="", author="", tags=None, longp=False):
     """Create a new thread, if subject and comment are specified, with optional author/tags"""
     if None in [subject, comment]:
         return False
@@ -98,7 +96,7 @@ def new_thread(subject="", comment="", author="", tags=None):
         author = s.anon
     comment = clean(comment, s.length["long"])
     check = line_check(comment)
-    if check:
+    if not longp and check:
         return check
     author = clean(author, s.length["name"])
     author = tripcode(author)
@@ -183,7 +181,7 @@ def mk_replynum(thread, parent="1"):
     replynum = str(len(tfile))
     return ":".join([parent, replynum])
 
-def new_reply(thread, comment, parent, author="", subject="", sage=False):
+def new_reply(thread, comment, parent, author="", subject="", sage=False, longp=False):
     """Post a new reply to a thread"""
     if wl.flood("comment"):
         return False
@@ -204,7 +202,7 @@ def new_reply(thread, comment, parent, author="", subject="", sage=False):
         author = s.anon
     comment = clean(comment, s.length["long"])
     check = line_check(comment)
-    if check:
+    if check and not longp:
         return check
     author = clean(author, s.length["name"])
     author = tripcode(author)

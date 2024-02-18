@@ -419,8 +419,11 @@ def create_thread():
         tags = ["random"]
     if wl.flood("thread"):
         return mk_page(wl.flood("thread"))
+    longp = False
+    if "longp" in data:
+        longp = True
     result = post.new_thread(data["subject"], data["comment"],
-                             data["author"], tags)
+                             data["author"], tags, longp)
     if len(result) > 20:
         return mk_page(result)
     output = ld_page("redirect").format(thread=result)
@@ -429,7 +432,7 @@ def create_thread():
 @view.route('/post', methods = ["POST"])
 def reply_thread():
     """Post a reply to a thread"""
-    sage = False
+    sage, longp = False, False
     data = request.form.copy()
     if None in [data["thread"], data["comment"]]:
         return None
@@ -441,11 +444,14 @@ def reply_thread():
         data["subject"] = ""
     if "sage" in data:
         sage = True
+    if "longp" in data:
+        longp = True
+        
     if wl.flood("comment"):
         return mk_page(wl.flood("comment"))
     error = post.new_reply(data["thread"], data["comment"],
                            data["parent"], data["author"],
-                           data["subject"], sage)
+                           data["subject"], sage, longp)
     if error:
         return mk_page(error)
     output = ld_page("redirect").format(thread=data["thread"] + "#bottom")
