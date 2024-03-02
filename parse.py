@@ -78,8 +78,8 @@ def fmtpost(comment):
     output = []
     for line in comment:
         test = line
-        if "%" in line and not (test.count("%") % 2):
-            test = test.split("%")
+        if "%%" in line and not (test.count("%%") % 2):
+            test = test.split("%%")
             result = []
             tagopen = 0
             for n, t in enumerate(test):
