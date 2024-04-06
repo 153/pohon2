@@ -35,7 +35,8 @@ def mk_page(content=None):
     page += footer()
     return page
 
-def mk_tagbox():
+def mk_tagbox(selected=None):
+    print(selected)
     """Make checkboxes of tags for OP to use when creating a thread"""
     tags = settings.tags
     template = """<label for="{0}"><input type="checkbox" name="tag"
@@ -45,8 +46,9 @@ id="{0}" value="{0}">{0}</label>"""
         tagbox = tagbox.read()
     for t in tags:
         checkbox = template.format(t)
-        if t == "random":
-            checkbox = checkbox.replace("checkbox\"", "checkbox\" checked")
+        if selected:
+            if t in selected:
+                checkbox = checkbox.replace("checkbox\"", "checkbox\" checked")
         taglist.append(checkbox)
     taglist = "\n".join(taglist)
     tagbox = tagbox.format(taglist)
@@ -242,6 +244,10 @@ def tag_index(tags, badtags=None):
     poscnt = len(set(poscnt))
     negcnt = len(set(negcnt))
     if negcnt > poscnt: negcnt = poscnt
+    if len(tags) > 1:
+        clink = "/create/" + "+".join(tags)
+    else:
+        clink = "/create/" + tags[0]
     tags = " ".join([f"+{tag}" for tag in tags])
     results = [[t, *results[t]] for t in results]
     results.sort(key = lambda x: x[1], reverse=True)
@@ -252,7 +258,9 @@ def tag_index(tags, badtags=None):
         output.append(newline)
     if len(output) == 0:
         output = ["Zero entries for tag query"]
+
     output = "\n<li>" + "\n<li>".join(output)
+    output += f"<p><li><a href='{clink}'>Make a new thread with these tags</a>"
     output = atoms + "\n<ul>" + output + "\n</ul>"
     if len(title) == 0:
         title = f"<h3>{tags} ({poscnt} threads)</h3>"
@@ -395,12 +403,29 @@ def view_thread(thread):
     return mk_page(page)
 
 @view.route('/create/', methods = ["POST", "GET"])
-def create_thread():
+@view.route('/create/<tag>', methods = ["POST", "GET"])
+def create_thread(tag=None):
     """Allow a user to create a new thread"""
+
+    if tag == None:
+        tags = request.form.getlist("tag")
+    else:
+        if "+" in tag:
+            tags = tag.split("+")
+        elif " " in tag:
+            tags = tag.split(" ")
+        else:
+            tags = [tag]
+    print(tags)
+    tags = [t for t in tags if t in settings.tags]
+    if not len(tags):
+        tags = "random"
+    print(tags)
+    
     if request.method == "GET":
         if wl.approve():
             tform = ld_page("new_thread")
-            tform = tform.format(tags=mk_tagbox(),
+            tform = tform.format(tags=mk_tagbox(tags),
                         author=settings.anon,
                         subject = str(settings.length["subject"]),
                         name = str(settings.length["name"]),
@@ -411,10 +436,7 @@ def create_thread():
             return wl.show_captcha(0, "/create/")
             return "<meta http-equiv='refresh' content='0;URL=/captcha'>"
     data = request.form
-    tags = request.form.getlist("tag")
-    if not len(tags):
-        tags = "random"
-    tags = [t for t in tags if t in settings.tags]
+
     if not len(tags):
         tags = ["random"]
     if wl.flood("thread"):
