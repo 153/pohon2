@@ -77,6 +77,10 @@ span.author {
     font-weight: bold;
 }
 
+span.deleted {
+    font-style: italic;
+}
+
 span.error {
     color: red;
 }
