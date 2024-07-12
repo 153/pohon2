@@ -20,6 +20,24 @@ hr {
     color: #c0c0c0;
 }
 
+.headline {
+    display: block;
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-top: 0.83em;
+    margin-bottom: 0.83em;
+}
+
+.thread-head {
+    display: block;
+    font-size: 1.17em;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    margin-left: 0;
+    margin-right: 0;
+    font-weight: bold;
+}
+
 .title {
     background-color: #007f7f;
     padding:2px;
@@ -37,12 +55,30 @@ label {
     white-space: nowrap;
 }
 
-.threadnav {
-    padding: 1em;
-    background-color: #006666;
-    max-width: 18em;
-    position: sticky;
-    top: 10%;    
+table.comment-box {
+    padding-left: 3em;
+}
+
+td.comment {
+    padding-left: 1em;
+    width: 80ch; 
+    white-space: break-spaces;
+}
+
+span.subject {
+    font-weight: bold;
+}
+
+span.pubdate {
+    text-decoration: underline;
+}
+
+span.author {
+    font-weight: bold;
+}
+
+span.error {
+    color: red;
 }
 
 details {
@@ -69,6 +105,18 @@ summary {
     cursor: pointer;
     text-decoration: underline;
     color: cyan;
+}
+
+input.subject {
+    width: 20em;
+}
+
+.threadnav {
+    padding: 1em;
+    background-color: #006666;
+    max-width: 18em;
+    position: sticky;
+    top: 10%;    
 }
 
 .sage {
