@@ -116,6 +116,7 @@ input.subject {
     background-color: #006666;
     max-width: 18em;
     position: sticky;
+    float:right;
     top: 10%;    
 }
 
