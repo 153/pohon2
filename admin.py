@@ -286,7 +286,7 @@ def delete_comments(thread, deletes):
     for d in deletes:
         convo[d][3] = "<i>Message removed</i>"
         convo[d][4] = ""
-        convo[d][5] = "</b><i>Deleted</i><b>"
+        convo[d][5] = "</span><i>Deleted</i><span>"
         postdates.append([thread, convo[d][1]])
     convo = "\n".join(["<>".join(c) for c in convo]) + "\n"
     with open(f'data/{thread}.txt', "w") as output:
