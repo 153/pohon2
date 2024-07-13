@@ -116,12 +116,17 @@ input.subject {
 }
 
 .threadnav {
-    padding: 1em;
-    background-color: #006666;
+    height: 0;
+    opacity: 80%;
+    mix-blend-mode: lighten;
     max-width: 18em;
     position: sticky;
-    float:right;
-    top: 10%;    
+    float: right;
+    top: 10%;        
+}
+.threadnav ul {
+    background-color: #006666;
+    padding: 1em;
 }
 
 .sage {
