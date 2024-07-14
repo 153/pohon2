@@ -117,8 +117,6 @@ input.subject {
 
 .threadnav {
     height: 0;
-    opacity: 80%;
-    mix-blend-mode: lighten;
     max-width: 18em;
     position: sticky;
     float: right;
