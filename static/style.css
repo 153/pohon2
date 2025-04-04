@@ -92,6 +92,13 @@ details {
     background-color: #006666;
 }
 
+.info {
+    display: inline-block;
+    border: 2px solid black;
+    padding: 2em;
+    background-color: #006666;
+}
+
 details.tagbox {
     width: 350px;
 }
@@ -120,7 +127,7 @@ input.subject {
     max-width: 18em;
     position: sticky;
     float: right;
-    top: 10%;        
+    top: 10%;        
 }
 .threadnav ul {
     background-color: #006666;

@@ -130,7 +130,8 @@ def rules():
 def show_tags():
     """Format a tag list for users"""
     tags = tag_list()
-    page = ["<ul>"]
+    info = ld_page("taginfo")
+    page = [info, "<ul>"]
     for t in tags:
         if t[1] == 0:
             continue
